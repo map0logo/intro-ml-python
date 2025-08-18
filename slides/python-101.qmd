@@ -1,0 +1,452 @@
+---
+title: Python 101
+subtitle: Introducción y configuración del entorno de trabajo
+date: last-modified
+author:
+  - name: Francisco Palm
+    orcid: 0000-0002-1293-0868
+    email: fpalm@qu4nt.com
+    affiliations: qu4nt, activistasxsl
+format:
+  clean-revealjs
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+lang: es
+---
+
+## Contenido
+
+\
+
+1.  Instalación y uso de UV para entornos virtuales
+2.  Configuración en VS Code
+3.  IPython e IPykernel en entornos virtuales
+4.  Panorama actual de Python
+5.  Introspección del lenguaje
+6.  Documentación integrada y tipos de datos
+7.  Uso del módulo pdb para depuración
+
+------------------------------------------------------------------------
+
+## ¿Qué es `uv`?  
+
+\
+
+- Herramienta para la gestión de proyectos en Python: dependencias, entornos virtuales, paquetes y aplicaciones.
+- Desarrollada por **Astral** (creadores de `ruff`)  
+- Implementada en **Rust** → Extremadamente rápida y eficiente  
+- Alternativa moderna a `pip`, `pip-tools`, `pipx`, `poetry`, `pyenv`, `twine`, `virtualenv`, y más...
+
+## Instalación
+
+\
+
+<https://docs.astral.sh/uv/getting-started/installation/>
+
+**Validación:**
+
+``` bash
+uv --version
+# uv 0.8.11 (f892276ac 2025-08-14)
+```
+
+------------------------------------------------------------------------
+
+## Ventajas de UV sobre venv tradicional
+
+\
+
+1.  **Velocidad:** Hasta 10x más rápido al crear entornos
+2.  **Compatibilidad:** Reemplaza a heramientas ya existentes
+3.  **Funcionalidad integrada:** Incluye instalador de paquetes y de distintas versiones del propio Python
+4.  **Resolución de dependencias:** Más rápida y confiable
+
+## Ejemplo de flujo de trabajo
+
+\
+
+Moverse al directorio del proyecto
+
+**Inicialización**
+
+``` bash
+uv init
+uv venv
+```
+
+**Uso**
+
+``` bash
+source .venv/bin/activate  # Activación
+uv add numpy pandas  # Instalación rápida
+```
+
+<https://docs.astral.sh/uv/guides/projects/>
+
+------------------------------------------------------------------------
+
+## Instalación de vsCode
+
+\
+
+Entorno de desarrollo integrado extensible, multiplataforma y multilemguaje.
+
+Sitio Oficial de Microsoft
+<https://code.visualstudio.com>
+
+Versión sin telemetría
+<https://vscodium.com>
+
+- Instalar extensiones para Python
+
+## Configuración en VS Code
+
+**Pasos para configurar el intérprete del entorno virtual:**
+
+1.  Abrir VS Code en la carpeta del proyecto
+2.  Crear o abrir un archivo Python (.py)
+3.  Presionar `Ctrl+Shift+P` (Command+Shift+P en Mac)
+4.  Buscar "Python: Select Interpreter"
+5.  Seleccionar el intérprete de `.venv`
+
+**Verificación:** - Al abrir terminal integrada, debería aparecer `(.venv)` en el prompt - Al ejecutar `import sys; print(sys.executable)` debe apuntar a `.venv`
+
+------------------------------------------------------------------------
+
+## IPykernel en Entornos Virtuales
+
+**¿Por qué instalar ipykernel en el entorno virtual?**
+
+1.  **Uso de las herramientas interactivas**
+2.  **Consistencia:** Los notebooks usan las mismas dependencias que tu proyecto
+3.  **Aislamiento:** Evita conflictos con paquetes globales
+4.  **Reproducibilidad:** Garantiza que otros puedan ejecutar tu notebook con las mismas versiones
+
+**Instalación:**
+
+``` bash
+uv pip install ipykernel
+```
+
+**Registro del kernel:**
+
+``` bash
+python -m ipykernel install --user --name=.venv
+```
+
+------------------------------------------------------------------------
+
+## Uso de IPython en Entorno Virtual
+
+**Después de la configuración:**
+
+1.  Abrir Jupyter Notebook/Lab
+2.  Seleccionar el kernel correspondiente al entorno (.venv)
+3.  Verificar que está usando el intérprete correcto:
+
+``` python
+import sys
+print(sys.executable)  # Debe mostrar la ruta a .venv
+```
+
+**Beneficios:** - Autocompletado funciona con los paquetes instalados - Los imports respetan el aislamiento del entorno - Puedes usar `%debug` con las dependencias correctas
+
+------------------------------------------------------------------------
+
+## Flujo de Trabajo Integrado
+
+1.  Crear entorno con UV
+
+    ``` bash
+    uv venv .venv
+    ```
+
+2.  Activar entorno
+
+    ``` bash
+    source .venv/bin/activate
+    ```
+
+3.  Instalar dependencias
+
+    ``` bash
+    uv pip install numpy pandas ipykernel
+    ```
+
+4.  Registrar kernel
+
+    ``` bash
+    python -m ipykernel install --user --name=.venv
+    ```
+
+5.  Configurar VS Code para usar `.venv`
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Instalación de IPython
+
+**IPython:** Intérprete interactivo mejorado para Python.
+
+**Instalación:**
+
+``` bash
+uv pip install ipython
+```
+
+**Características principales:**
+
+-   Autocompletado con TAB
+-   Sintaxis coloreada
+-   ? para ayuda rápida
+-   ! para comandos del sistema
+-   Historial de comandos mejorado
+
+**Ejemplo de uso:**
+
+``` python
+In [1]: import numpy as np
+
+In [2]: np.random.rand?  # Muestra ayuda inmediata
+```
+
+## ¿Por qué Python hoy?
+
+\
+
+-   **Lenguaje #1** en popularidad ([Índice TIOBE](https://www.tiobe.com/tiobe-index/), [StackOverflow Survey 2024](https://survey.stackoverflow.co/2024/technology))
+-   **Crecimiento sostenido**: +22% en adopción empresarial (2022-2023)
+-   **Ecosistema único**: 600,000+ paquetes en PyPI
+-   **Revolución IA/ML**: Bibliotecas como TensorFlow y PyTorch lo eligieron
+
+::: r-fit-text
+**"Python es el segundo mejor lenguaje para todo"**\
+*– Peter Norvig (Director de Investigación de Google)*
+:::
+
+------------------------------------------------------------------------
+
+## Historia: De hobby a fenómeno global
+
+**1989** - Guido van Rossum comienza el proyecto como sucesor de ABC\
+**1991** - Primera versión pública (0.9.0)\
+**2000** - Python 2.0 con recolector de basura\
+**2008** - Python 3.0 (cambio importante no retrocompatible)\
+**2018** - Guido se retira como "Benevolent Dictator for Life"\
+**2020** - Fin de soporte para Python 2.7
+
+![Línea de tiempo de Python](images/python-timeline.jpg){.r-stretch}
+
+------------------------------------------------------------------------
+
+## Filosofía Pythonica
+
+\
+
+**El Zen de Python** (import this)
+
+``` python
+>>> import this
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Readability counts.
+...
+```
+
+------------------------------------------------------------------------
+
+## Pilares de la filosofía Python
+
+\
+
+1.  **Legibilidad ante todo**\
+    (Sintaxis clara, indentación significativa)
+2.  **Baterías incluidas**\
+    (Biblioteca estándar robusta)
+3.  **Multi-paradigma**\
+    (OOP, funcional, procedural)
+4.  **Comunidad inclusiva**\
+    (Código de conducta, PSF)
+5.  **Interoperabilidad**\
+    (C/C++, Java, .NET)
+
+------------------------------------------------------------------------
+
+## Python en 2025: Más relevante que nunca
+
+\
+
+| Área | Ejemplos | Impacto |
+|------------------|-----------------------------|-------------------------|
+| Ciencia Datos | Pandas, NumPy | 85% de analistas lo usan |
+| IA/ML | Scikit-learn, PyTorch | Frameworks líderes |
+| Web | Django, FastAPI | 60% de backends nuevos |
+| Automatización | Scripting, DevOps | Estandar en CI/CD |
+| Educación | Primer lenguaje en universidades | 70% de cursos introductorios |
+
+------------------------------------------------------------------------
+
+## Futuro de Python
+
+\
+
+-   **Rendimiento**: Mejoras con Python 3.11+ (50% más rápido), Python 3.13 GIL opcional
+-   **Tipado**: Soporte gradual para tipos estáticos: [mypy](https://mypy-lang.org/), [pyright](https://microsoft.github.io/pyright), [ty](https://docs.astral.sh/ty/)
+-   **WebAssembly**: [Pyodide](https://pyodide.org) para ejecución en navegadores
+-   **IA Generativa**: Bibliotecas como LangChain y transformers
+
+------------------------------------------------------------------------
+
+## Introspección del Lenguaje
+
+Capacidad de examinar objetos en tiempo de ejecución para conocer sus propiedades, métodos y estructura.
+
+**Ejemplos comunes:**
+
+``` python
+# Conocer tipo de un objeto
+type(5)  # <class 'int'>
+
+# Listar atributos/métodos
+dir(str)  # Muestra todos los métodos de strings
+
+# Ver documentación
+help(str.upper)  # Muestra ayuda del método upper
+```
+
+------------------------------------------------------------------------
+
+## Herramientas de Introspección
+
+-   `type()`: Devuelve el tipo de un objeto
+-   `dir()`: Lista atributos y métodos disponibles
+-   `help()`: Muestra documentación integrada
+-   `hasattr()`: Verifica si un objeto tiene un atributo
+-   `getattr()`: Obtiene un atributo de un objeto
+
+``` python
+cadena = "Hola"
+if hasattr(cadena, 'upper'):
+    print(getattr(cadena, 'upper')())  # HOLA
+```
+
+------------------------------------------------------------------------
+
+## Documentación Integrada
+
+Python incluye documentación accesible directamente desde el intérprete:
+
+``` python
+help(print)  # Muestra ayuda de la función print
+
+print.__doc__  # Accede al docstring directamente
+
+# Para módulos
+import math
+help(math)
+```
+
+## Docstrings
+
+Cadenas de documentación que definen el propósito de funciones/clases.
+
+``` python
+def suma(a, b):
+    """Suma dos números y devuelve el resultado"""
+    return a + b
+```
+
+Una vez la función es interpretada, la documentación queda disponible dentro del entorno. Se utiliza para generar documentación integrada y contextual.
+
+## Tipos de Datos y Expresiones
+
+**Tipos básicos:**
+
+-   `int`: Enteros (5, -3, 42)
+-   `float`: Punto flotante (3.14, -0.001)
+-   `str`: Cadenas ("Hola", 'Python')
+-   `bool`: Booleanos (True, False)
+-   `list`: Listas \[1, 2, 3\]
+-   `dict`: Diccionarios {"clave": valor}
+
+**Expresiones:** Combinaciones de valores/variables/operadores que producen un resultado.
+
+``` python
+5 + 3 * 2  # Expresión aritmética
+nombre if edad >= 18 else "menor"  # Expresión condicional
+```
+
+------------------------------------------------------------------------
+
+## Depuración con pdb
+
+**Módulo pdb:** Depurador integrado en Python.
+
+**Formas de iniciar:**
+
+1.  En el código:
+
+``` python
+import pdb; pdb.set_trace()
+```
+
+2.  Desde línea de comandos:
+
+``` bash
+python -m pdb script.py
+```
+
+**Comandos básicos:** - `l` (list): muestra código alrededor - `n` (next): siguiente línea - `s` (step): entra en función - `c` (continue): continúa ejecución - `p` (print): imprime variable - `q` (quit): sale del depurador
+
+------------------------------------------------------------------------
+
+## Ejemplo de Depuración
+
+``` python
+def factorial(n):
+    import pdb; pdb.set_trace()
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+print(factorial(3))
+```
+
+**Sesión de depuración típica:**
+
+```         
+> ejemplo.py(3)factorial()
+-> if n == 0:
+(Pdb) p n  # Muestra valor de n
+3
+(Pdb) n  # Avanza a siguiente línea
+```
+
+------------------------------------------------------------------------
+
+## Consejos para Depuración Efectiva
+
+1.  Establece puntos de interrupción estratégicos
+2.  Examina el estado de las variables con `p`
+3.  Usa `where` para ver la traza de llamadas
+4.  Combina con logging para seguimiento
+5.  En IPython: `%debug` después de un error
+
+**Alternativas modernas:** - Depurador de IDEs (VSCode, PyCharm) - `breakpoint()` en Python 3.7+
+
+------------------------------------------------------------------------
+
+## Resumen Ampliado
+
+-   **UV** ofrece una alternativa moderna y rápida a `venv`+`pip`
+-   Los **entornos virtuales** son esenciales para manejar dependencias
+-   **VS Code** se integra perfectamente con entornos virtuales
+-   **IPykernel** en el entorno garantiza consistencia en notebooks
+-   Este flujo profesional previene muchos problemas comunes
+
+**¡Ahora tienes un entorno profesional para desarrollo en Python!**
