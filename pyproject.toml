@@ -1,0 +1,10 @@
+[project]
+name = "intro-ml-python"
+version = "0.1.0"
+description = "Curso introductorio al Aprendizaje automático con Python, sklearn y pytorch"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "quarto-cli>=1.7.33",
+    "scikit-learn>=1.7.1",
+]
