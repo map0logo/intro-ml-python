@@ -394,12 +394,14 @@ name = "intro-ml-python"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "jupyterlab" },
     { name = "quarto-cli" },
     { name = "scikit-learn" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "jupyterlab", specifier = ">=4.4.6" },
     { name = "quarto-cli", specifier = ">=1.7.33" },
     { name = "scikit-learn", specifier = ">=1.7.1" },
 ]

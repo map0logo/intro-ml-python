@@ -5,6 +5,7 @@ description = "Curso introductorio al Aprendizaje automático con Python, sklear
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "jupyterlab>=4.4.6",
     "quarto-cli>=1.7.33",
     "scikit-learn>=1.7.1",
 ]
