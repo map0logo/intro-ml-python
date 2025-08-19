@@ -13,6 +13,7 @@ html-math-method:
   method: mathjax
   url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 lang: es
+logo: images/qu4nt-logo.png
 ---
 
 ## Contenido
@@ -71,8 +72,8 @@ Moverse al directorio del proyecto
 **Inicialización**
 
 ``` bash
-uv init
-uv venv
+uv init . # Inicializa un proyecto en la carpeta actual
+uv venv # Inicializa un entorno en la carpeta actual
 ```
 
 **Uso**
@@ -92,65 +93,148 @@ uv add numpy pandas  # Instalación rápida
 
 Entorno de desarrollo integrado extensible, multiplataforma y multilemguaje.
 
-Sitio Oficial de Microsoft
-<https://code.visualstudio.com>
+- Sitio Oficial de Microsoft <https://code.visualstudio.com>
+- Versión sin telemetría <https://vscodium.com>
 
-Versión sin telemetría
-<https://vscodium.com>
+En cualquiera de los dos sitios descarga los instaladores para tu sistema operativo.
 
-- Instalar extensiones para Python
+O utiliza los gestores de paquetes de tu sistema operativo, la [tienda de aplicaciones de Microsoft](https://apps.microsoft.com/detail/xp9khm4bk9fz7q), o [brew para macOS](https://formulae.brew.sh/cask/visual-studio-code).
 
-## Configuración en VS Code
+## Instalar extensiones para Python
 
-**Pasos para configurar el intérprete del entorno virtual:**
+\
 
-1.  Abrir VS Code en la carpeta del proyecto
-2.  Crear o abrir un archivo Python (.py)
-3.  Presionar `Ctrl+Shift+P` (Command+Shift+P en Mac)
-4.  Buscar "Python: Select Interpreter"
-5.  Seleccionar el intérprete de `.venv`
+Ver:
+<https://code.visualstudio.com/docs/python/python-quick-start>
 
-**Verificación:** - Al abrir terminal integrada, debería aparecer `(.venv)` en el prompt - Al ejecutar `import sys; print(sys.executable)` debe apuntar a `.venv`
+**Configuración del entorno virtual**
+
+- Pasos para configurar el intérprete del entorno virtual:
+
+1.  Abrir la carpeta del proyecto en vsCode 
+2.  Crear o abrir un archivo Python (`.py`)
+3.  Presionar `Ctrl+Shift+P` (`Command+Shift+P` en Mac)
+4.  Buscar *Python: Select Interpreter* o *Seleccionar intérprete*
+5.  Seleccionar el Python del `.venv` en la carpeta del proyecto.
+
+Ver:
+<https://code.visualstudio.com/docs/python/environments>
+
+## Verificación
+
+- Al abrir terminal integrada, debería aparecer una indicador en el apuntador del terminal, por ejemplo `(nombre-proyecto)`
+
+Si mi proyecto se llama `intro-ml-python`:
+
+En bash
+
+```bash
+(intro-ml-python) [mapologo@muta intro-ml-python]$ 
+```
+
+Esto varía según la línea de comandos, personalización y sistema operativo.
+
+\
+
+- Al ejecutar `import sys; print(sys.executable)` debe apuntar al python de `.venv` en la carpeta del proyecto. 
 
 ------------------------------------------------------------------------
 
-## IPykernel en Entornos Virtuales
+## Instalar IPykernel en el entorno virtual
 
-**¿Por qué instalar ipykernel en el entorno virtual?**
+\
 
-1.  **Uso de las herramientas interactivas**
-2.  **Consistencia:** Los notebooks usan las mismas dependencias que tu proyecto
+Si intentamos ejecutar códgo de manera interactiva en Python, vsCode nos pedirá instalar ipykernel. ipykernel es una dependencia de `ipython` y `jupyterlab`.
+
+Puedes darle un vistazo en:
+
+<https://docs.jupyter.org/en/latest/>
+
+De todas maneras, estaremos mostrando su uso a lo largo del curso.
+
+## ¿Por qué instalar ipykernel en el entorno virtual?
+
+\
+
+1.  **Uso de las herramientas interactivas**: nos permite correr código paso a paso en modo interactivo y ejecutar cuadernos de jupyter desde vsCode (Esto requiere que instalemos la [extensión Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter))
+2.  **Consistencia:** Los notebooks|cuadernos de Jupyter usan las mismas dependencias que tu proyecto
 3.  **Aislamiento:** Evita conflictos con paquetes globales
 4.  **Reproducibilidad:** Garantiza que otros puedan ejecutar tu notebook con las mismas versiones
 
-**Instalación:**
+## Instalación de ipykernel
+
+\
+
+Desde la línea de comandos
 
 ``` bash
 uv pip install ipykernel
 ```
 
-**Registro del kernel:**
+Alternativa, si queremos que forme parte de nuestro entorno
 
 ``` bash
-python -m ipykernel install --user --name=.venv
+uv add --dev ipykernel
 ```
+
+También podemos instalar `jupyterlab` del cual `ipykernel` es una dependencia.
+
+## ¿Qué es IPython | Jupyter?
+
+**IPython:** Intérprete interactivo mejorado para Python en línea de comandos.
+
+**Jupyter:** Es una interfaz web que se desarrolló a partir de `IPython`
+
+**Instalación:**
+
+``` bash
+uv pip install ipython jupyterlab
+```
+
+**Características principales:**
+
+- Autocompletado con TAB
+- Sintaxis coloreada
+- ? para ayuda rápida
+- ! para comandos del sistema
+- Historial de comandos mejorado
+
+
+## Ejemplos de uso:
+
+IPython desde el terminal
+
+```bash
+$ ipython
+Python 3.13.7 (main, Aug 15 2025, 12:34:02) [GCC 15.2.1 20250813]
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.32.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: import numpy as np
+
+In [2]: np.random.rand?  # Muestra ayuda inmediata
+```
+
+Ejemplos de uso de Jupyter dentro de vsCode:
+
+<https://code.visualstudio.com/docs/python/jupyter-support-py>
 
 ------------------------------------------------------------------------
 
-## Uso de IPython en Entorno Virtual
+## Uso de IPython/Juyter en el Entorno Virtual
 
 **Después de la configuración:**
 
-1.  Abrir Jupyter Notebook/Lab
+1.  Abrir un archivo Jupyter Notebook/Lab extensión `.ipynb`.
 2.  Seleccionar el kernel correspondiente al entorno (.venv)
 3.  Verificar que está usando el intérprete correcto:
 
-``` python
+```python
 import sys
 print(sys.executable)  # Debe mostrar la ruta a .venv
 ```
 
-**Beneficios:** - Autocompletado funciona con los paquetes instalados - Los imports respetan el aislamiento del entorno - Puedes usar `%debug` con las dependencias correctas
+> Si, ya lo habíamos visto antes, pero esto es para validar que usamos el python correcto en el intérprete interactivo, que puede ser distinto del intérprete del proyecto.
 
 ------------------------------------------------------------------------
 
@@ -159,7 +243,14 @@ print(sys.executable)  # Debe mostrar la ruta a .venv
 1.  Crear entorno con UV
 
     ``` bash
-    uv venv .venv
+    uv venv
+    ```
+
+    Si quiero iniciar un proyecto
+
+
+    ``` bash
+    uv init .
     ```
 
 2.  Activar entorno
@@ -171,46 +262,17 @@ print(sys.executable)  # Debe mostrar la ruta a .venv
 3.  Instalar dependencias
 
     ``` bash
-    uv pip install numpy pandas ipykernel
+    uv pip install scikit-learn ipykernel
     ```
 
-4.  Registrar kernel
+4.  Si quiero añadirlas al proyecto
 
     ``` bash
-    python -m ipykernel install --user --name=.venv
+    uv add scikit-learn
+    uv add --dev ipykernel
     ```
 
-5.  Configurar VS Code para usar `.venv`
-
-------------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-## Instalación de IPython
-
-**IPython:** Intérprete interactivo mejorado para Python.
-
-**Instalación:**
-
-``` bash
-uv pip install ipython
-```
-
-**Características principales:**
-
--   Autocompletado con TAB
--   Sintaxis coloreada
--   ? para ayuda rápida
--   ! para comandos del sistema
--   Historial de comandos mejorado
-
-**Ejemplo de uso:**
-
-``` python
-In [1]: import numpy as np
-
-In [2]: np.random.rand?  # Muestra ayuda inmediata
-```
+# Introducción a Python
 
 ## ¿Por qué Python hoy?
 
@@ -303,6 +365,8 @@ Readability counts.
 
 ## Introspección del Lenguaje
 
+\
+
 Capacidad de examinar objetos en tiempo de ejecución para conocer sus propiedades, métodos y estructura.
 
 **Ejemplos comunes:**
@@ -322,6 +386,8 @@ help(str.upper)  # Muestra ayuda del método upper
 
 ## Herramientas de Introspección
 
+\
+
 -   `type()`: Devuelve el tipo de un objeto
 -   `dir()`: Lista atributos y métodos disponibles
 -   `help()`: Muestra documentación integrada
@@ -338,6 +404,8 @@ if hasattr(cadena, 'upper'):
 
 ## Documentación Integrada
 
+\
+
 Python incluye documentación accesible directamente desde el intérprete:
 
 ``` python
@@ -352,6 +420,8 @@ help(math)
 
 ## Docstrings
 
+\
+
 Cadenas de documentación que definen el propósito de funciones/clases.
 
 ``` python
@@ -362,21 +432,30 @@ def suma(a, b):
 
 Una vez la función es interpretada, la documentación queda disponible dentro del entorno. Se utiliza para generar documentación integrada y contextual.
 
-## Tipos de Datos y Expresiones
+## Tipos de Datos
+
+\
 
 **Tipos básicos:**
 
--   `int`: Enteros (5, -3, 42)
--   `float`: Punto flotante (3.14, -0.001)
--   `str`: Cadenas ("Hola", 'Python')
--   `bool`: Booleanos (True, False)
--   `list`: Listas \[1, 2, 3\]
--   `dict`: Diccionarios {"clave": valor}
+-   `int`: Enteros (`5`, `-3`, `42`)
+-   `float`: Punto flotante (`3.14`, `-0.001`)
+-   `str`: Cadenas (`"Hola"`, `'Python'`)
+-   `bool`: Booleanos (`True`, `False`)
+-   `list`: Listas `[1, 2, 3]`
+-   `dict`: Diccionarios `{"clave": valor}`
 
-**Expresiones:** Combinaciones de valores/variables/operadores que producen un resultado.
+## Expresiones
 
-``` python
+\
+
+Combinaciones de valores/variables/operadores que producen un resultado.
+
+Las expresiones son de distinto tipo dependiendo del tipo de valor que devuelven:
+
+```python
 5 + 3 * 2  # Expresión aritmética
+edad >= 18 # Expresión lógica
 nombre if edad >= 18 else "menor"  # Expresión condicional
 ```
 
@@ -388,10 +467,16 @@ nombre if edad >= 18 else "menor"  # Expresión condicional
 
 **Formas de iniciar:**
 
-1.  En el código:
+1.  Al principio de un script:
 
 ``` python
 import pdb; pdb.set_trace()
+```
+
+En cualquier parte del código
+
+``` python
+breakpoint()
 ```
 
 2.  Desde línea de comandos:
@@ -400,13 +485,25 @@ import pdb; pdb.set_trace()
 python -m pdb script.py
 ```
 
-**Comandos básicos:** - `l` (list): muestra código alrededor - `n` (next): siguiente línea - `s` (step): entra en función - `c` (continue): continúa ejecución - `p` (print): imprime variable - `q` (quit): sale del depurador
+## Comandos básicos de pdb
+
+\
+
+- `l` (list): muestra código alrededor
+- `n` (next): siguiente línea
+- `s` (step): entra en función
+- `c` (continue): continúa ejecución
+- `p` (print): imprime variable
+- `q` (quit): sale del depurador
 
 ------------------------------------------------------------------------
 
 ## Ejemplo de Depuración
 
+\
+
 ``` python
+# ejemplo.py
 def factorial(n):
     import pdb; pdb.set_trace()
     if n == 0:
@@ -419,8 +516,9 @@ print(factorial(3))
 
 **Sesión de depuración típica:**
 
-```         
-> ejemplo.py(3)factorial()
+```bash
+$ python ejemplo.py
+> ejemplo.py(3)factorial() # A partir de la línea 3 dentro de la función factorial
 -> if n == 0:
 (Pdb) p n  # Muestra valor de n
 3
@@ -431,22 +529,29 @@ print(factorial(3))
 
 ## Consejos para Depuración Efectiva
 
+\
+
 1.  Establece puntos de interrupción estratégicos
 2.  Examina el estado de las variables con `p`
 3.  Usa `where` para ver la traza de llamadas
 4.  Combina con logging para seguimiento
 5.  En IPython: `%debug` después de un error
 
-**Alternativas modernas:** - Depurador de IDEs (VSCode, PyCharm) - `breakpoint()` en Python 3.7+
+**Alternativas modernas:**
+
+- Depurador de IDEs (VSCode, PyCharm)
+- `breakpoint()` en Python 3.7+
 
 ------------------------------------------------------------------------
 
 ## Resumen Ampliado
 
--   **UV** ofrece una alternativa moderna y rápida a `venv`+`pip`
--   Los **entornos virtuales** son esenciales para manejar dependencias
--   **VS Code** se integra perfectamente con entornos virtuales
--   **IPykernel** en el entorno garantiza consistencia en notebooks
--   Este flujo profesional previene muchos problemas comunes
+\
+
+- **uv** ofrece una alternativa coherente y rápida a `venv`+`pip`, facilitando el uso de Python
+- Los **entornos virtuales** son esenciales para manejar dependencias
+- **vsCode** ofrece soporte para la integración con entornos virtuales
+- **IPykernel** garantiza consistencia con herramientas interactivas de Python dentro de vsCode.
+- Aunque es complicado en un principio, el uso de estas herramientas ofrece un flujo profesional que previene muchos problemas comunes
 
 **¡Ahora tienes un entorno profesional para desarrollo en Python!**
