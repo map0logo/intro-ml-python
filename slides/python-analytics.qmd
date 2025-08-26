@@ -1,0 +1,258 @@
+---
+title: Python para Datos
+subtitle: Primeros pasos para análisis y visualización
+date: last-modified
+author:
+  - name: Francisco Palm
+    orcid: 0000-0002-1293-0868
+    email: fpalm@qu4nt.com
+    affiliations: qu4nt, activistasxsl
+format:
+  clean-revealjs
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+lang: es
+logo: images/qu4nt-logo.png
+---
+
+# Introducción a Datos Tabulares y Gráficas en Python
+
+## Agenda
+
+\
+
+1. Lectura de datos tabulares con Pandas  
+2. Exploración y selección de datos con DataFrames  
+3. Visualización de datos con Matplotlib y Pandas
+
+# 1. Lectura de Datos Tabulares
+
+## Pandas y DataFrames
+
+\
+
+- [Pandas](https://pandas.pydata.org/) es la biblioteca más usada para datos tabulares en Python.  
+- Similar a las tablas de R.  
+- Un **DataFrame** es una tabla con filas y columnas. 
+  - Cada columna puede ser de un tipo diferente.
+  - Cada fila puede ser de un tipo diferente.
+  - Las columnas y las filas tienen índices. 
+
+
+## Cargando un archivo CSV
+
+\
+
+```{python}
+#| echo: true
+
+import pandas as pd
+
+data_oceania = pd.read_csv("../data/gapminder_gdp_oceania.csv")
+print(data_oceania)
+```
+
+---
+
+## Usando una columna como índice
+
+\
+
+```{python}
+#| echo: true
+data_oceania_country = pd.read_csv(
+    "../data/gapminder_gdp_oceania.csv",
+    index_col="country"
+)
+print(data_oceania_country)
+```
+
+---
+
+## Inspeccionando un DataFrame
+
+\
+
+```{python}
+#| echo: true
+data_oceania_country.info()
+data_oceania_country.columns
+```
+
+---
+
+## Transponer y describir datos
+
+\
+
+```{python}
+#| echo: true
+print(data_oceania_country.T)
+print(data_oceania_country.describe())
+```
+
+---
+
+## Ejercicio 💡
+
+* Lee `gapminder_gdp_americas.csv` en un DataFrame.
+* Usa `.describe()` para ver sus estadísticas.
+
+# 2. Exploración de DataFrames
+
+## Selección por posición e índice
+
+\
+
+```{python}
+#| echo: true
+data = pd.read_csv("../data/gapminder_gdp_europe.csv", index_col="country")
+
+# Por posición
+print(data.iloc[0, 0])
+
+# Por etiqueta
+print(data.loc["Albania", "gdpPercap_1952"])
+```
+
+## Slices y subconjuntos
+
+\
+
+```{python}
+#| echo: true
+# Todas las columnas para Albania
+print(data.loc["Albania", :])
+
+# Varias filas y columnas
+print(data.loc["Italy":"Poland", "gdpPercap_1962":"gdpPercap_1972"])
+```
+
+## Operaciones sobre subconjuntos
+
+\
+
+```{python}
+#| echo: true
+subset = data.loc["Italy":"Poland", "gdpPercap_1962":"gdpPercap_1972"]
+print(subset.max())
+print(subset.min())
+```
+
+## Filtros con máscaras booleanas
+
+\
+
+```{python}
+#| echo: true
+mask = subset > 10000
+print(subset[mask])
+```
+
+## Agrupamiento (split-apply-combine)
+
+\
+
+```{python}
+#| echo: true
+mask_higher = data > data.mean()
+wealth_score = mask_higher.aggregate("sum", axis=1) / len(data.columns)
+
+print(data.groupby(wealth_score).sum())
+```
+
+## Ejercicio 💡
+
+\
+
+* Encuentra el PIB per cápita de Serbia en 2007.
+* Selecciona los países con PIB > 10000 en 1972.
+
+
+# 3. Visualización de Datos
+
+
+## matplotlib y pyplot
+
+```{python}
+#| echo: true
+import matplotlib.pyplot as plt
+
+time = [0, 1, 2, 3]
+position = [0, 100, 200, 300]
+
+plt.plot(time, position)
+plt.xlabel("Time (hr)")
+plt.ylabel("Position (km)")
+plt.show()
+```
+
+## Graficando desde un DataFrame
+
+```{python}
+#| echo: true
+data = pd.read_csv("../data/gapminder_gdp_oceania.csv", index_col="country")
+
+years = data.columns.str.replace("gdpPercap_", "").astype(int)
+data.columns = years
+
+data.loc["Australia"].plot()
+```
+
+## Varias series en un mismo gráfico
+
+```{python}
+#| echo: true
+data.T.plot()
+plt.ylabel("GDP per capita")
+```
+
+## Personalización y estilos
+
+```{python}
+#| echo: true
+plt.style.use("ggplot")
+data.T.plot(kind="bar")
+plt.ylabel("GDP per capita")
+```
+
+## Leyendas y formatos
+
+```{python}
+#| echo: true
+plt.plot(years, data.loc["Australia"], "b-", label="Australia")
+plt.plot(years, data.loc["New Zealand"], "g-", label="New Zealand")
+plt.legend(loc="upper left")
+```
+
+## Scatter plots
+
+```{python}
+#| echo: true
+plt.scatter(data.loc["Australia"], data.loc["New Zealand"])
+```
+
+## Guardando gráficos
+
+\
+
+```{python}
+#| echo: true
+plt.scatter(data.loc["Australia"], data.loc["New Zealand"])
+plt.savefig("mi_grafico.png")
+```
+
+## Ejercicio 💡
+
+\
+
+* Grafica el mínimo y máximo PIB per cápita de Europa en cada año.
+* Crea un scatter plot PIB vs esperanza de vida (2007).
+
+## ¡Gracias\!
+
+\
+
+**¿Preguntas?**
+

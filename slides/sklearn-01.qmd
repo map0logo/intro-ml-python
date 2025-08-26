@@ -1,0 +1,1014 @@
+---
+title: Python para Aprendizaje Automático 1
+subtitle: Introducción y Regresión
+date: last-modified
+author:
+  - name: Francisco Palm
+    orcid: 0000-0002-1293-0868
+    email: fpalm@qu4nt.com
+    affiliations: qu4nt, activistasxsl
+format:
+  clean-revealjs
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+lang: es
+logo: images/qu4nt-logo.png
+---
+
+# Introducción al Machine Learning y Métodos de Regresión
+
+------------------------------------------------------------------------
+
+## ¿Qué aprenderemos hoy?
+
+\
+
+-   🤖 **¿Qué es el machine learning?**
+-   📊 **Diferencias entre IA, ML y DL**
+-   🔍 **Aplicaciones en la vida cotidiana**
+-   📈 **Métodos supervisados: Regresión**
+-   💻 **Práctica con Scikit-Learn**
+
+------------------------------------------------------------------------
+
+## ¿Qué es Machine Learning?
+
+\
+
+> El machine learning es un conjunto de técnicas que permiten a las computadoras usar datos para mejorar su rendimiento en una tarea específica.
+
+------------------------------------------------------------------------
+
+## ¿Cómo aprenden las máquinas?
+
+\
+
+-   🧠 Similar a como los humanos aprenden de la experiencia
+-   📊 **"Dirigido por datos"** - usa estadísticas de los datos
+-   🎯 Hace predicciones basadas en patrones encontrados
+
+## ¿Para qué sirve el ML?
+
+\
+
+-   🔍 **Encontrar tendencias** en conjuntos de datos
+-   🏷️ **Clasificar datos** en grupos o categorías\
+-   📊 **Hacer predicciones** basadas en datos
+-   🎮 **"Aprender"** a interactuar con un entorno
+
+## AI vs ML vs DL
+
+\
+
+![Diagrama de relaciones](images/AI_ML_DL_differences.png){fig-align="center"}
+
+------------------------------------------------------------------------
+
+## Inteligencia Artificial (AI)
+
+\
+
+-   🌟 **Término más amplio** - diseñar dispositivs que se comporten de manera autónoma garantizando un rendimiento
+-   📧 Desde filtros de spam hasta LLMs
+-   🎯 El objetivo **sensato** es construir infraestructuras de IA basadas en datos de libre acceso y modelos de código abierto.
+
+------------------------------------------------------------------------
+
+## Machine Learning (ML)
+
+\
+
+-   🎯 **Más específico** - algoritmos que aprenden patrones de datos
+-   📚 Necesita cientos/miles de ejemplos para aprender
+-   🔒 Limitado a tareas específicas o similares
+
+------------------------------------------------------------------------
+
+## Deep Learning (DL)
+
+\
+
+-   🧠 **Redes neuronales** - basados en analogás con el sistema nervioso
+-   📊 Puede resolver problemas diversos
+-   ⚡ Puede requerir **enormes cantidades** de datos y poder computacional
+
+# ML en Nuestra Vida Diaria
+
+
+## Ejemplos Cotidianos
+
+\
+
+-   🏦 **Bancos**: Detección de fraudes en transacciones
+-   📧 **Email**: Filtros de spam inteligentes
+-   🗺️ **Apps de viaje**: Estimación de tráfico y rutas
+-   🛒 **Retail**: Sistemas de recomendación
+
+
+## Más Ejemplos
+
+\
+
+-   👁️ **Reconocimiento**: Imágenes, objetos, patrones
+-   🚗 **Coches autónomos**: Detección de objetos
+-   🎬 **Streaming**: Contenido personalizado
+-   🤖 **Robots**: Interacción con el mundo
+
+## 💬 Momento de Reflexión
+
+\
+
+**Comenta:**
+
+1. ¿Dónde más has visto ML en uso?
+2. ¿Qué tipo de datos usa ese sistema?
+3. ¿Tu interacción ayuda a entrenar el sistema?
+4. ¿Has visto fallar algún sistema?
+
+# Limitaciones del ML
+
+## 🗑️ "Garbage In = Garbage Out"
+
+\
+
+-   Si los datos de entrada son basura...
+-   ...la salida también será basura
+-   ⚠️ **Ejemplo**: Buscar relación entre variables no relacionadas
+
+## 📊 Sesgos en Datos de Entrenamiento
+
+\
+
+-   La calidad depende de la **amplitud** y **calidad** de los datos
+-   Los sesgos en datos se reflejan en el modelo
+-   ⚠️ **Ejemplo**: Datos de transporte solo de áreas ricas
+
+## 📈 Problemas de Extrapolación
+
+\
+
+-   Solo podemos predecir dentro del **rango de entrenamiento**
+-   Fuera de ese rango → resultados no confiables
+-   Algunos algoritmos son mejores para extrapolación
+
+## 🎯 Sobreajuste (Overfitting)
+
+\
+
+-   El modelo se "entrena demasiado"
+-   Funciona mal con datos reales nuevos
+-   ⚠️ Como memorizar respuestas sin entender
+
+## ❓ Falta de Explicabilidad
+
+\
+
+-   Los modelos pueden dar respuestas incorrectas
+-   La mayoría no puede explicar su lógica
+-   Dificulta detectar y diagnosticar problemas
+
+
+# Introducción a Scikit-Learn
+
+## ¿Qué es Scikit-Learn?
+
+\
+
+-   🐍 **Paquete de Python** para machine learning
+-   🌍 Construido por cientos de contribuidores
+-   🏭 Usado en industria y academia
+-   🔧 API limpia y consistente
+
+## Dependencias de Scikit-Learn
+
+\
+
+-   📊 **NumPy**: Computación numérica eficiente
+-   🔬 **SciPy**: Computación científica
+-   📏 Diseñado para datasets pequeños a medianos
+-   💻 No requiere GPU para este curso
+
+## Verificando la Instalación
+
+\
+
+```{python}
+#| echo: true
+import sklearn
+print('scikit-learn:', sklearn.__version__)
+```
+
+
+# Representación de Datos en Scikit-Learn
+
+## Estructura de Datos
+
+\
+
+Los algoritmos de ML esperan datos en **arreglos bidimensionales**:
+
+```python
+[n_samples, n_features]
+```
+
+-   **n_samples**: Número de muestras
+-   **n_features**: Número de características
+
+## Matriz de Características (X)
+
+\
+
+```python
+# Variable X - características/features
+X = [[feature1, feature2, feature3],
+     [feature1, feature2, feature3],
+     ...]
+```
+
+-   Datos que usamos para entrenar
+-   Generalmente valores reales
+
+## Vector Objetivo (y)
+
+\
+
+```python
+# Variable y - etiquetas/objetivos
+y = [label1, label2, label3, ...]
+```
+
+-   Las "respuestas correctas"
+-   Lo que queremos predecir
+
+
+## Esquema Visual
+
+
+![Entrada de Scikit-Learn](images/sklearn_input.png){fig-align="center"}
+
+# ¿Qué cubriremos en este curso?
+
+## Temas a tratar
+
+\
+
+-   📚 **Aprendizaje supervisado**
+-   📊 **Aprendizaje no supervisado**
+-   🧠 **Introducción a redes neuronales**
+-   🔵 **Enfoque en técnicas clásicas** (marcadas en azul)
+
+## Mapa del Machine Learning
+
+![Resumen de ML](images/ML_summary.png){fig-align="center"}
+
+# Aprendizaje Supervisado: Regresión
+
+## ¿Qué es el Aprendizaje Supervisado?
+
+\
+
+-   👨‍🏫 Actuamos como "supervisor" o "maestro"
+-   📝 Proporcionamos **datos etiquetados** con respuestas ejemplo
+-   🎯 El algoritmo aprende de estos ejemplos
+
+## Ejemplos de Aprendizaje Supervisado
+
+\
+
+-   🐱🐶 **Clasificación**: Distinguir gatos de perros
+-   🏠💰 **Regresión**: Predecir precios de casas
+-   📊 Datos etiquetados = datos con respuestas conocidas
+
+## Clasificación vs Regresión
+
+\
+
+| Clasificación      | Regresión           |
+|--------------------|---------------------|
+| 🏷️ Datos discretos | 📈 Datos continuos  |
+| Gato/Perro         | Precio: €250,000    |
+| Spam/No spam       | Temperatura: 23.5°C |
+
+------------------------------------------------------------------------
+
+## ¿Qué es la Regresión?
+
+\
+
+> Técnica estadística que relaciona una **variable dependiente** (objetivo) con una o más **variables independientes** (características).
+
+## Objetivo de la Regresión
+
+\
+
+-   📊 **Describir la relación** entre variables
+-   🎯 **Ajustar un modelo** matemático a los datos
+-   📈 **Hacer predicciones** con nuevos datos
+
+------------------------------------------------------------------------
+
+## Tipos de Regresión
+
+\
+
+![Ejemplo de regresiones](images/regression_example.png)
+
+-   **Lineal**: Línea recta
+-   **Polinomial**: Curva
+
+------------------------------------------------------------------------
+
+## Regresión Lineal
+
+**Ecuación matemática:**
+
+$$     
+y = mx + c
+$$
+
+-   **y**: variable objetivo
+-   **x**: variable característica\
+-   **m**: pendiente
+-   **c**: intersección con eje y
+
+# Práctica con los Datos los Pingüinos de Palmer
+
+## Cargando los Datos
+
+\
+
+```{python}
+#| echo: true
+import seaborn as sns
+
+dataset = sns.load_dataset("penguins")
+print(dataset.shape)
+dataset.head()
+```
+
+## Explorando el Dataset
+
+\
+
+-   📊 **7 columnas** en total
+-   4 continuas: `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`, `body_mass_g`
+-   3 categóricas: `species`, `island`, `sex`
+-   ⚠️ Algunos valores faltantes (`NaN`)
+
+------------------------------------------------------------------------
+
+## Limpieza de Datos
+
+\
+
+```{python}
+#| echo: true
+# Eliminar filas con valores faltantes
+dataset.dropna(inplace=True)
+dataset.head()
+```
+
+**¡Los datos faltantes son comunes en la vida real!**
+
+------------------------------------------------------------------------
+
+## Seleccionando Variables
+
+\
+
+-   **Característica (X)**: `body_mass_g`
+-   **Objetivo (y)**: `bill_depth_mm`
+-   **Datos de entrenamiento**: Primeras 146 muestras
+
+## Extrayendo Datos de Entrenamiento
+
+\
+
+```{python}
+#| echo: true
+import matplotlib.pyplot as plt
+
+train_data = dataset[:146]  # primeras 146 filas
+
+x_train = train_data["body_mass_g"]
+y_train = train_data["bill_depth_mm"]
+```
+
+------------------------------------------------------------------------
+
+## Visualización Inicial
+
+\
+
+```{python}
+#| echo: true
+plt.scatter(x_train, y_train)
+plt.xlabel("mass g")
+plt.ylabel("depth mm")
+plt.show()
+```
+
+------------------------------------------------------------------------
+
+## Flujo de Trabajo en ML
+
+\
+
+1.  🎯 **Decidir** qué modelo usar
+2.  🔧 **Formatear** datos para el modelo
+3.  📚 **Definir y entrenar** el modelo
+4.  🔮 **Hacer predicciones**
+5.  ✅ **Verificar precisión** y visualizar
+
+------------------------------------------------------------------------
+
+## Preparando los Datos
+
+\
+
+```{python}
+#| echo: true
+import numpy as np
+
+# Scikit-Learn requiere arrays 2D
+x_train = np.array(x_train).reshape(-1, 1)
+y_train = np.array(y_train).reshape(-1, 1)
+
+print(x_train.shape)  # (146, 1)
+print(y_train.shape)  # (146, 1)
+```
+
+------------------------------------------------------------------------
+
+## Creando el Modelo
+
+\
+
+```{python}
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+# Definir el modelo
+model = LinearRegression(fit_intercept=True)
+
+# Entrenar el modelo
+lin_regress = model.fit(x_train, y_train)
+```
+
+## Inspeccionando Parámetros
+
+\
+
+```{python}
+#| echo: true
+# Obtener parámetros del modelo entrenado
+m = lin_regress.coef_        # pendiente
+c = lin_regress.intercept_   # intersección
+
+print("Coeficientes lineales:", m, c)
+```
+
+## Haciendo Predicciones
+
+\
+
+```{python}
+#| echo: true
+# Predecir usando el modelo entrenado
+y_train_pred = lin_regress.predict(x_train)
+```
+
+**¡Realizamos predicciones sobre los mismos datos de entrenamiento para evaluar!**
+
+------------------------------------------------------------------------
+
+## Calculando Error RMSE
+
+```{python}
+#| echo: true
+import math
+from sklearn.metrics import mean_squared_error
+
+# Calcular error cuadrático medio
+error = math.sqrt(mean_squared_error(y_train, y_train_pred))
+print("RMSE de entrenamiento =", error)
+```
+
+**RMSE = Root Mean Squared Error**
+
+## Visualizando Resultados
+
+```{python}
+#| echo: true
+plt.scatter(x_train, y_train, label="datos")
+plt.plot(x_train, y_train_pred, "-", label="ajuste")
+plt.plot(x_train, y_train_pred, "rx", label="predicciones")
+plt.xlabel("body_mass_g")
+plt.ylabel("bill_depth_mm")
+plt.legend()
+plt.show()
+```
+
+## ¡Primer Modelo Completado! 🎉
+
+\
+
+**¿Qué hemos logrado?**
+
+- ✅ Creado nuestro primer modelo de ML
+- ✅ Podemos predecir `bill_depth_mm` para cualquier `body_mass_g`
+- 📊 Tenemos una línea de ajuste
+
+------------------------------------------------------------------------
+
+## Probando con Más Datos
+
+\
+
+```{python}
+#| echo: true
+# Extraer datos restantes para prueba
+test_data = dataset[146:]  # fila 147 hasta el final
+x_test = test_data["body_mass_g"]
+y_test = test_data["bill_depth_mm"]
+
+# Formatear datos
+x_test = np.array(x_test).reshape(-1, 1)
+y_test = np.array(y_test).reshape(-1, 1)
+```
+
+## Predicciones en Datos de Prueba
+
+\
+
+```{python}
+#| echo: true
+# Predecir con datos nuevos
+y_test_pred = lin_regress.predict(x_test)
+
+# Calcular error en datos de prueba
+error_test = math.sqrt(mean_squared_error(y_test, y_test_pred))
+print("RMSE de prueba =", error_test)
+```
+
+## ⚠️ Problema: Error Más Alto
+
+\
+
+El RMSE en datos de prueba es **mucho mayor** que en entrenamiento.
+
+**¿Qué está pasando?**
+
+## Visualizando el Problema
+
+```{python}
+#| echo: true
+plt.scatter(x_train, y_train, label="entrenamiento")
+plt.scatter(x_test, y_test, label="prueba")
+plt.plot(x_train, y_train_pred, "-", label="ajuste")
+plt.xlabel("body_mass_g")
+plt.ylabel("bill_depth_mm")
+plt.legend()
+plt.show()
+```
+
+## 🚨 Overfitting (Sobreajuste)
+
+\
+
+**¿Qué observamos?**
+
+- Dos grupos distintos de datos
+- El modelo se ajusta bien a UN grupo
+- Funciona mal en el otro grupo
+
+## ¿Qué es el Overfitting?
+
+\
+
+-   🎯 El modelo aprende los datos **específicos** de entrenamiento
+-   📚 Como memorizar respuestas de un examen
+-   ❌ No generaliza a datos nuevos
+-   🔍 Especialmente común con datos limitados
+
+## Mejorando la División de Datos
+
+\
+
+```{python}
+#| echo: true
+from sklearn.model_selection import train_test_split
+
+x = dataset['body_mass_g']
+y = dataset['bill_depth_mm']
+
+# Formatear datos
+x = np.array(x).reshape(-1, 1)
+y = np.array(y).reshape(-1, 1)
+
+# División aleatoria 80/20
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.2, random_state=0
+)
+```
+
+## 🏋️ Ejercicio Práctico
+
+\
+
+**Reimplementa el modelo con la nueva división:**
+
+1.  ✅ Define el modelo
+2.  🎯 Entrena con `.fit()`
+3.  🔮 Obtén predicciones con `.predict()`
+4.  📊 Calcula RMSE para entrenamiento y prueba
+5.  📈 Grafica datos y línea de ajuste
+
+## Solución del Ejercicio
+
+\
+
+```{python}
+#| echo: true
+from sklearn.linear_model import LinearRegression
+
+# 1. Definir modelo
+model = LinearRegression(fit_intercept=True)
+
+# 2. Entrenar modelo
+lin_regress = model.fit(x_train, y_train)
+
+# 3. Predicciones
+y_train_pred = lin_regress.predict(x_train)
+y_test_pred = lin_regress.predict(x_test)
+```
+
+## Calculando Errores
+
+\
+
+```{python}
+#| echo: true
+# 4. Calcular RMSE
+train_error = math.sqrt(mean_squared_error(y_train, y_train_pred))
+test_error = math.sqrt(mean_squared_error(y_test, y_test_pred))
+
+print("RMSE entrenamiento =", train_error)
+print("RMSE prueba =", test_error)
+```
+
+## Visualización Final
+
+```{python}
+#| echo: true
+# 5. Gráfica
+plt.scatter(x_train, y_train, label="entrenamiento")
+plt.scatter(x_test, y_test, label="prueba")
+plt.plot(x_train, y_train_pred, "-", label="ajuste")
+plt.xlabel("body_mass_g")
+plt.ylabel("bill_depth_mm")
+plt.legend()
+plt.show()
+```
+
+## Interpretación de Resultados
+
+\
+
+**¿Es este un buen modelo?**
+
+- ¿Es preciso?
+- ¿Qué dice sobre la relación masa-profundidad del pico?
+- ¿Deberíamos confiar en sus predicciones?
+
+
+# Regresión Polinomial
+
+## ¿Por qué Regresión Polinomial?
+
+\
+
+-   📈 Los datos reales rara vez son perfectamente lineales
+-   🌊 Las funciones polinomiales pueden capturar curvas
+-   🔢 Forma matemática: `y = a + bx + cx² + dx³ + ... + mx^N`
+
+## Grados Polinomiales
+
+\
+
+-   **Grado 1**: `y = a + bx` (lineal)
+-   **Grado 2**: `y = a + bx + cx²` (cuadrático)
+-   **Grado 3**: `y = a + bx + cx² + dx³` (cúbico)
+-   **Grado N**: Mayor complejidad
+
+
+## Mismo Flujo de Trabajo
+
+\
+
+1.  ✅ Decidir modelo (polinomial)
+2.  🔧 Formatear datos
+3.  📚 Definir y entrenar modelo
+4.  🔮 Hacer predicciones\
+5.  ✅ Verificar precisión
+
+## Preprocessing Polinomial
+
+\
+
+```{python}
+#| echo: true
+from sklearn.preprocessing import PolynomialFeatures
+
+# Crear representación polinomial
+poly_features = PolynomialFeatures(degree=2)
+x_train_poly = poly_features.fit_transform(x_train)
+x_test_poly = poly_features.transform(x_test)
+x_train_poly[0:5]
+```
+
+## 🧠 Concepto Clave
+
+\
+
+**Convertimos un problema no-lineal en uno lineal:**
+
+-   Transformamos las características a representación polinomial
+-   Usamos regresión lineal sobre las características transformadas
+-   ¡Problema no-lineal resuelto con técnicas lineales!
+
+------------------------------------------------------------------------
+
+## Entrenando el Modelo Polinomial
+
+\
+
+```{python}
+#| echo: true
+# Usar LinearRegression con características polinomiales
+poly_regress = LinearRegression()
+poly_regress.fit(x_train_poly, y_train)
+```
+
+**¡Es regresión lineal sobre características polinomiales!**
+
+------------------------------------------------------------------------
+
+## Predicciones y Errores
+
+\
+
+```{python}
+#| echo: true
+# Predicciones
+y_train_pred = poly_regress.predict(x_train_poly)
+y_test_pred = poly_regress.predict(x_test_poly)
+
+# Errores
+poly_train_error = math.sqrt(mean_squared_error(y_train_pred, y_train))
+poly_test_error = math.sqrt(mean_squared_error(y_test_pred, y_test))
+
+print("Error entrenamiento polinomial =", poly_train_error)
+print("Error prueba polinomial =", poly_test_error)
+```
+
+## Visualización Polinomial
+
+\
+
+```python
+# Datos de entrenamiento y prueba
+plt.scatter(x_train, y_train, label='Entrenamiento', color='blue', alpha=0.6)
+plt.scatter(x_test, y_test, label='Prueba', color='red', alpha=0.6)
+
+# Línea del modelo
+x_range = np.linspace(min(x), max(x), 500).reshape(-1, 1)
+y_range_pred = poly_regress.predict(poly_features.transform(x_range))
+plt.plot(x_range, y_range_pred, label='Ajuste Polinomial', color='green', linewidth=2)
+
+plt.xlabel("mass g")
+plt.ylabel("depth mm")
+plt.legend()
+```
+
+----
+
+\
+
+```{python}
+# Datos de entrenamiento y prueba
+plt.scatter(x_train, y_train, label='Entrenamiento', color='blue', alpha=0.6)
+plt.scatter(x_test, y_test, label='Prueba', color='red', alpha=0.6)
+
+# Línea del modelo
+x_range = np.linspace(min(x), max(x), 500).reshape(-1, 1)
+y_range_pred = poly_regress.predict(poly_features.transform(x_range))
+plt.plot(x_range, y_range_pred, label='Ajuste Polinomial', color='green', linewidth=2)
+
+plt.xlabel("mass g")
+plt.ylabel("depth mm")
+plt.legend()
+```
+
+## 🏋️ Ejercicio: Experimentar con Grados
+
+\
+
+**Cambia el parámetro `degree=` en `PolynomialFeatures`:**
+
+-   Prueba `degree=3`, `degree=4`, `degree=5`
+-   ¿Puedes mejorar el RMSE?
+-   ¿Qué observas al aumentar el grado?
+
+# La Importancia del Análisis Exploratorio
+
+## ¿Por qué Múltiples Clusters?
+
+\
+
+Cuando vemos **grupos distintos** en los datos, debemos preguntarnos:
+
+**¿Qué variable oculta causa estos clusters?**
+
+## Análisis Exploratorio de Datos (EDA)
+
+\
+
+**Pasos críticos antes de modelar:** 
+
+- 🔍 Investigar relaciones entre variables
+- 📊 Verificar correlaciones 
+- 📈 Graficar distribuciones
+- ⚠️ Buscar valores atípicos
+- 🕳️ Revisar valores faltantes
+
+## Explorando con Pairplot
+
+\
+
+```python
+# Visualización por especies
+sns.pairplot(dataset, 
+             vars=["body_mass_g", "bill_depth_mm"], 
+             hue="species", 
+             diag_kind="kde", 
+             markers=["o", "s", "D"])
+plt.show()
+```
+
+----
+
+\
+
+```{python}
+# Visualización por especies
+sns.pairplot(dataset, 
+             vars=["body_mass_g", "bill_depth_mm"], 
+             hue="species", 
+             diag_kind="kde", 
+             markers=["o", "s", "D"])
+plt.show()
+```
+
+## ¡Revelación! 🎉
+
+\
+
+**Existen 3 conjuntos que corresponden a diferentes especies de pingüinos:**
+
+- Cada especie tiene características distintas
+- La relación masa-profundidad varía por especie
+- Necesitamos incluir `species` como variable predictora
+
+## Modelo Multivariable
+
+\
+
+```{python}
+#| echo: true
+import pandas as pd
+
+# Preparar datos con especies
+dataset = dataset.dropna(subset=['body_mass_g', 'bill_depth_mm', 'species'])
+
+# Definir predictores y objetivo
+X = dataset[['body_mass_g', 'species']]
+y = dataset['bill_depth_mm']
+```
+
+## One-Hot Encoding
+
+\
+
+```{python}
+#| echo: true
+# Convertir variables categóricas a numéricas
+X = pd.get_dummies(X, columns=['species'], drop_first=True)
+
+# drop_first=True evita multicolinealidad
+
+X.head()
+```
+
+**¿Por qué?** Los algoritmos de ML necesitan datos numéricos.
+
+## Entrenamiento Final
+
+\
+
+```{python}
+#| echo: true
+# División de datos
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Ajuste del modelo
+model = LinearRegression()
+model.fit(x_train, y_train)
+
+# Predicción y evaluación
+
+y_pred_train = model.predict(x_train)
+rmse_train = mean_squared_error(y_train, y_pred_train)
+print(f"RMSE de entrenamiento: {rmse_train:.2f}")
+y_pred = model.predict(x_test)
+rmse = mean_squared_error(y_test, y_pred)
+print(f"RMSE con especies: {rmse:.2f}")
+```
+
+## Interpretando Coeficientes
+
+\
+
+```{python}
+#| echo: true
+# Ver coeficientes aprendidos
+coefficients = pd.Series(model.coef_, index=X.columns)
+print("\nCoeficientes del modelo:")
+print(coefficients)
+```
+
+# Resumen y Conclusiones
+
+## ¿Qué Hemos Aprendido?
+
+\
+
+-   🤖 **Conceptos básicos** de Machine Learning
+-   📊 **Diferencias** entre AI, ML, y DL
+-   🔧 **Uso de Scikit-Learn** para regresión
+-   ⚠️ **Limitaciones** y problemas comunes
+-   🔍 **Importancia** del análisis exploratorio
+
+## Lecciones Clave
+
+\
+
+1.  🗑️ **Calidad de datos** = calidad del modelo
+2.  🎯 **Overfitting** es un problema real
+3.  📊 **División aleatoria** de datos es crucial
+4.  🔍 **EDA primero**, modelado después
+5.  🧩 **Variables adicionales** pueden resolver problemas
+
+## Mejores Prácticas
+
+\
+
+-   ✅ Siempre explorar datos primero
+-   ✅ Dividir datos aleatoriamente
+-   ✅ Evaluar en datos no vistos
+-   ✅ Considerar variables adicionales
+-   ✅ Interpretar coeficientes del modelo
+
+## Próximos Pasos
+
+\
+
+-   📚 **Clasificación** (próxima lección)
+-   🧩 **Aprendizaje no supervisado**
+-   🧠 **Redes neuronales**
+-   🔧 **Más técnicas de preprocessing**
+-   📊 **Validación cruzada**
+
+## ¿Preguntas?
+
+\
+
+**¡Hora de practicar y experimentar!**
+
+🤔 ¿Qué otros datasets te gustaría explorar?
+
+🔬 ¿Qué problemas reales podrías resolver con regresión?
+
+## Recursos Adicionales
+
+\
+
+-   📖 [Scikit-Learn Documentation](https://scikit-learn.org/)
+-   📚 Python Data Science Handbook
+-   🌐 Kaggle Learn (cursos gratuitos)
+-   📊 Dataset repositories: UCI, Kaggle, Seaborn
+
+**¡Gracias por su atención!**
+
+🎉 **¡Felicidades por completar su primer modelo de Machine Learning!**

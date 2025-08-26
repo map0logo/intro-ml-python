@@ -1,0 +1,1035 @@
+---
+title: Python para Aprendizaje Automático 2
+subtitle: Clasificación y Métodos de Conjuntos
+date: last-modified
+author:
+  - name: Francisco Palm
+    orcid: 0000-0002-1293-0868
+    email: fpalm@qu4nt.com
+    affiliations: qu4nt, activistasxsl
+format:
+  clean-revealjs
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+lang: es
+logo: images/qu4nt-logo.png
+---
+
+# Clasificación y Métodos de Ensemble en Machine Learning
+
+---
+
+## Agenda de la Sesión (90 minutos)
+
+- **Parte 1: Clasificación Supervisada** (45 min)
+
+  - Conceptos fundamentales
+  - Dataset de pingüinos
+  - Árboles de decisión
+  - Support Vector Machines (SVM)
+
+- **Parte 2: Métodos de Ensemble** (45 min)
+
+  - Introducción a ensemble methods
+  - Random Forests (Bagging)
+  - Stacking con regresión
+  - Ejercicios prácticos
+
+# Parte 1: Clasificación Supervisada
+
+---
+
+## ¿Qué es la Clasificación?
+
+- **Método supervisado** para reconocer y agrupar datos en categorías predeterminadas
+- Requiere **datos etiquetados** para el entrenamiento
+- Predice **categorías discretas** (vs. regresión que predice valores continuos)
+
+---
+
+## Clasificación vs. Regresión
+
+| Clasificación | Regresión |
+|---------------|-----------|
+| Salida: Categorías discretas | Salida: Valores continuos |
+| Ejemplo: Especie de pingüino | Ejemplo: Precio de casa |
+| Ejemplo: Spam/No spam | Ejemplo: Temperatura |
+
+---
+
+## Dataset: Palmer Penguins
+
+![Palmer Penguins](../fig/palmer_penguins.png)
+
+- **344 observaciones** de pingüinos
+- **3 especies**: Chinstrap, Gentoo, Adelie
+- **3 islas** en el Archipiélago Palmer, Antártida
+
+---
+
+## Variables del Dataset
+
+![Culmen Depth](../fig/culmen_depth.png)
+
+**Atributos físicos medidos:**
+
+- Longitud del pico (bill_length_mm)
+- Profundidad del pico (bill_depth_mm)
+- Longitud de la aleta (flipper_length_mm)
+- Masa corporal (body_mass_g)
+
+---
+
+## Cargando los Datos
+
+```{python}
+# | echo: true
+import seaborn as sns
+
+dataset = sns.load_dataset('penguins')
+dataset.head()
+```
+
+**Objetivo:** Desarrollar un modelo que prediga la especie de pingüino basado en sus medidas físicas
+
+---
+
+## Preprocesamiento de Datos
+
+```{python}
+# | echo: true
+# Extraer las características que necesitamos
+feature_names = ['bill_length_mm', 'bill_depth_mm', 
+                 'flipper_length_mm', 'body_mass_g']
+
+dataset.dropna(subset=feature_names, inplace=True)
+
+class_names = dataset['species'].unique()
+
+X = dataset[feature_names]  # Características
+y = dataset['species']      # Etiquetas
+```
+
+---
+
+## ¿Por qué Train-Test Split?
+
+**Problema:** ¿Cómo evaluamos qué tan bien funciona nuestro modelo?
+
+**Solución:** Dividir los datos
+- **80% para entrenamiento** - entrenar el modelo
+- **20% para prueba** - evaluar el rendimiento
+
+**Beneficio:** Evita el sobreajuste y proporciona una evaluación objetiva
+
+---
+
+## Importancia de la Aleatorización
+
+**Problema común:** Los datos pueden estar ordenados
+- Dataset de pingüinos: ordenado por especies
+- Solo tomar las primeras 146 muestras = solo una especie
+
+**Solución:** Mezclar aleatoriamente antes de dividir
+
+```{python}
+# | echo: true
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=0
+)
+```
+
+---
+
+## Visualizando los Datos
+
+```{python}
+# | echo: true
+import matplotlib.pyplot as plt
+
+fig01 = sns.scatterplot(
+    X_train, x=feature_names[0], y=feature_names[1], hue=dataset["species"]
+)
+plt.show()
+```
+
+**Observación:** Las especies forman clusters espaciales distintos
+
+---
+
+## Visualización Completa: Pairplot
+
+```{python}
+# | echo: true
+sns.pairplot(dataset, hue="species")
+plt.show()
+```
+
+![Pairplot](../fig/pairplot.png)
+
+Cada especie forma clusters distinguibles en el espacio de características
+
+# Árboles de Decisión
+
+---
+
+## ¿Qué son los Árboles de Decisión?
+
+- **Conceptualmente similares** a diagramas de flujo
+- **Divisiones binarias** basadas en comparaciones
+- Similar a **claves dicotómicas** en biología
+
+![Decision Tree Example](../fig/decision_tree_example.png)
+
+---
+
+## Implementando un Árbol de Decisión
+
+```{python}
+# | echo: true
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+clf = DecisionTreeClassifier(max_depth=2)
+clf.fit(X_train, y_train)
+
+clf.predict(X_test)
+```
+
+**Hiperparámetro clave:** `max_depth` - controla la profundidad máxima del árbol
+
+---
+
+## ¿Qué son los Hiperparámetros?
+
+**Definición:** Parámetros que ajustan cómo funciona un modelo
+
+**Diferencia:**
+
+- **Parámetros del modelo:** Se aprenden de los datos
+- **Hiperparámetros:** Los configuramos nosotros
+
+**Proceso:** Ajuste de hiperparámetros para mejorar rendimiento
+
+---
+
+## Evaluando el Modelo
+
+```{python}
+# | echo: true
+clf_score = clf.score(X_test, y_test)
+print(clf_score)  # ~98% de precisión
+```
+
+**Resultado:** ¡98% de precisión en datos de prueba!
+
+---
+
+## Visualizando el Árbol de Decisión
+
+```{python}
+# | echo: true
+fig = plt.figure(figsize=(12, 10))
+plot_tree(clf, 
+          class_names=class_names, 
+          feature_names=feature_names, 
+          filled=True, 
+          ax=fig.gca())
+plt.show()
+```
+
+![Decision Tree](../fig/e3_dt_2.png)
+
+---
+
+## Interpretando el Árbol
+
+**Primera división (profundidad=1):**
+
+- `flipper_length_mm <= 206.5`
+- Separa "Adelie" de "Gentoo"
+
+**Siguientes divisiones (profundidad=2):**
+
+- Refinan la clasificación
+- Introducen "Chinstrap"
+
+---
+
+## Visualizando el Espacio de Clasificación
+
+```{python}
+# | echo: true
+from sklearn.inspection import DecisionBoundaryDisplay
+
+f1 = feature_names[0]  # bill_length_mm
+f2 = feature_names[3]  # body_mass_g
+
+clf = DecisionTreeClassifier(max_depth=2)
+clf.fit(X_train[[f1, f2]], y_train)
+
+d = DecisionBoundaryDisplay.from_estimator(clf, X_train[[f1, f2]])
+sns.scatterplot(X_train, x=f1, y=f2, hue=y_train)
+plt.show()
+```
+
+---
+
+## Resultado: Fronteras Ortogonales
+
+![Classification Space](../fig/e3_dt_space_2.png)
+
+**Característica:** Los árboles de decisión crean regiones rectangulares
+
+---
+
+## Explorando Diferentes Profundidades
+
+```{python}
+# | echo: true
+max_depths = [1, 2, 3, 4, 5]
+accuracy = []
+
+for d in max_depths:
+    clf = DecisionTreeClassifier(max_depth=d)
+    clf.fit(X_train, y_train)
+    acc = clf.score(X_test, y_test)
+    accuracy.append((d, acc))
+```
+
+---
+
+## Resultados del Experimento
+
+![Performance vs Depth](../fig/e3_dt_overfit.png)
+
+**Observación clave:** `max_depth=2` funciona mejor que profundidades mayores
+
+---
+
+## El Problema del Sobreajuste
+
+**¿Por qué más profundidad puede ser peor?**
+
+- Modelos más complejos pueden **memorizar** los datos de entrenamiento
+- Crean reglas muy específicas que no generalizan
+- Funciona perfecto en entrenamiento, mal en datos nuevos
+
+**Lección:** A veces la simplicidad es mejor
+
+---
+
+## Árbol con max_depth=5
+
+```{python}
+# | echo: true
+clf = DecisionTreeClassifier(max_depth=5)
+clf.fit(X_train, y_train)
+
+fig = plt.figure(figsize=(12, 10))
+plot_tree(clf, class_names=class_names, 
+          feature_names=feature_names, filled=True)
+plt.show()
+```
+
+![Deep Decision Tree](../fig/e3_dt_6.png)
+
+---
+
+## Espacio de Clasificación Complejo
+
+![Complex Classification Space](../fig/e3_dt_space_6.png)
+
+**Problema:** Fronteras muy específicas que se ajustan demasiado a los datos de entrenamiento
+
+# Support Vector Machines (SVM)
+
+---
+
+## ¿Qué son las SVM?
+
+**Concepto:** Encuentra hiperplanos que separan las clases
+- **Intuición:** Similar a como pensamos naturalmente
+- **Objetivo:** Maximizar la distancia entre clases
+- **Fortaleza:** Maneja relaciones no lineales mediante kernels
+
+---
+
+## ¿Cuándo usar SVM vs. Árboles de Decisión?
+
+**Usar SVM cuando:**
+
+- Datos de alta dimensionalidad
+- Priorizas precisión sobre interpretabilidad
+- Relaciones no lineales complejas
+
+**Usar Árboles de Decisión cuando:**
+
+- Necesitas interpretabilidad
+- Datos de baja dimensionalidad
+- Explicar el modelo es importante
+
+---
+
+## Parámetros Entrenables en SVM
+
+**Para SVM lineal:**
+
+- **Vector de pesos:** Define la orientación del hiperplano
+- **Sesgo (bias):** Desplaza el hiperplano para maximizar margen
+
+**Tamaño:** Igual al número de características en X
+
+---
+
+## ¿Por qué Estandarizar los Datos?
+
+**Problema:** Diferentes escalas en las características
+- Longitud del pico: ~40-50 mm
+- Masa corporal: ~3000-6000 g
+
+**Sin estandarización:** SVM solo consideraría la masa corporal
+
+**Solución:** Z-score (media=0, std=1)
+
+---
+
+## Cuándo Estandarizar: Modelos Basados en Distancia
+
+**SIEMPRE estandarizar:**
+
+- Support Vector Machines (SVM)
+- k-Nearest Neighbors (k-NN)
+- Regresión Logística con regularización
+- Principal Component Analysis (PCA)
+- Redes Neuronales
+
+**Razón:** Usan cálculos de distancia que son sensibles a la escala
+
+---
+
+## Cuándo NO Estandarizar
+
+**NO necesitas estandarizar:**
+
+- Árboles de Decisión
+- Random Forests
+- Gradient Boosted Trees
+
+**Razón:** Usan umbrales, no cálculos de distancia
+
+---
+
+## Implementando la Estandarización
+
+```{python}
+# | echo: true
+from sklearn import preprocessing
+import pandas as pd
+
+scalar = preprocessing.StandardScaler()
+scalar.fit(X_train)  # ¡Solo en datos de entrenamiento!
+
+X_train_scaled = pd.DataFrame(
+    scalar.transform(X_train), 
+    columns=X_train.columns, 
+    index=X_train.index
+)
+
+X_test_scaled = pd.DataFrame(
+    scalar.transform(X_test),
+    columns=X_test.columns, 
+    index=X_test.index
+)
+```
+
+---
+
+## Entrenando el Modelo SVM
+
+```{python}
+# | echo: true
+from sklearn import svm
+
+SVM = svm.SVC(kernel='poly', degree=3, C=1.5)
+SVM.fit(X_train_scaled, y_train)
+
+svm_score = SVM.score(X_test_scaled, y_test)
+print("Decision tree score:", clf_score)
+print("SVM score:", svm_score)
+```
+
+---
+
+## Parámetros Clave de SVM
+
+**kernel:** Cómo transforma los datos
+- `'rbf'`: Para la mayoría de casos (Radial Basis Function)
+- `'linear'`: Para datos linealmente separables
+- `'poly'`: Para relaciones polinómicas
+
+**degree:** Complejidad del kernel polinómico (ej: degree=3 para cúbico)
+
+**C:** Balance entre suavidad de frontera y errores de clasificación
+
+---
+
+## Tipos de Kernels
+
+**Kernel Lineal:**
+
+- Producto punto directo entre vectores
+- Mejor para datos linealmente separables
+
+**Kernel Polinómico:**
+
+- Relaciones polinómicas entre características
+- Fronteras de decisión flexibles
+
+**Kernel RBF (Gaussian):**
+
+- Fronteras altamente flexibles
+- Efectivo para datos complejos no lineales
+
+---
+
+## Visualizando SVM
+
+```{python}
+# | echo: true
+x2 = X_train_scaled[[feature_names[0], feature_names[1]]]
+
+SVM = svm.SVC(kernel='poly', degree=3, C=1.5)
+SVM.fit(x2, y_train)
+
+DecisionBoundaryDisplay.from_estimator(SVM, x2)
+sns.scatterplot(x2, x=feature_names[0], y=feature_names[1], 
+                hue=dataset['species'])
+plt.show()
+```
+
+---
+
+## Espacio de Clasificación SVM
+
+![SVM Classification Space](../fig/e3_svc_space.png)
+
+**Observación:** Fronteras curvas y suaves (no rectangulares como árboles)
+
+---
+
+## Comparando Rendimientos
+
+**Árbol de Decisión (max_depth=2):** 98.5%
+**SVM (kernel poly):** 95.6%
+
+**¿Por qué SVM puede ser mejor a largo plazo?**
+
+- Fronteras no lineales más naturales
+- Menos propenso al sobreajuste
+- Mejor generalización con más datos
+
+# Parte 2: Métodos de Ensemble
+
+---
+
+## ¿Qué son los Métodos de Ensemble?
+
+**Principio:** "El todo es mayor que la suma de sus partes"
+
+**Idea:** Combinar múltiples modelos para obtener mejores predicciones
+
+**Beneficio:** Reducir sobreajuste y mejorar generalización
+
+---
+
+## ¿Por qué Funcionan los Ensembles?
+
+**Analogía humana:** Escuchamos múltiples opiniones antes de decidir
+
+**En ML:** Los modelos individuales pueden sobre/subajustarse
+- Combinando errores se cancelan
+- El resultado es más robusto
+
+**Candidatos ideales:** Árboles de decisión (sensibles a outliers)
+
+---
+
+## Tres Tipos Principales de Ensemble
+
+1. **Stacking** - Mismo dataset, diferentes modelos
+2. **Bagging** - Diferentes subsets, mismo modelo  
+3. **Boosting** - Subsets de errores, mismo modelo
+
+---
+
+## 1. Stacking
+
+![Stacking](../fig/stacking.jpeg)
+
+**Proceso:**
+
+- Entrenar diferentes modelos en paralelo
+- Usar un meta-modelo para combinar predicciones
+- Enfoque en diversidad de modelos
+
+---
+
+## 2. Bagging (Bootstrap Aggregating)
+
+![Bagging](../fig/bagging.jpeg)
+
+**Proceso:**
+
+- Mismo modelo, diferentes muestras aleatorias
+- Entrenar en paralelo
+- Promediar resultados
+- **Ejemplo famoso:** Random Forest
+
+---
+
+## 3. Boosting
+
+![Boosting](../fig/boosting.jpeg)
+
+**Proceso:**
+
+- Entrenar modelos secuencialmente
+- Cada modelo se enfoca en errores del anterior
+- No paralelizable, pero muy preciso
+
+---
+
+## Resumen de Métodos Ensemble
+
+| Método | Dataset | Modelos | Entrenamiento |
+|--------|---------|---------|---------------|
+| **Stacking** | Mismo | Diferentes | Paralelo |
+| **Bagging** | Diferentes subsets | Mismo | Paralelo |
+| **Boosting** | Subsets de errores | Mismo | Secuencial |
+
+---
+
+## ¿Cuál Método Elegir?
+
+**Stacking:** Para aprovechar diversidad de modelos diferentes
+
+**Bagging:** Para reducir varianza (sobreajuste) en datasets ruidosos
+
+**Boosting:** Para máxima precisión en datasets grandes y limpios
+
+# Random Forest (Bagging en Acción)
+
+---
+
+## ¿Qué es Random Forest?
+
+**Concepto:** Múltiples árboles de decisión + votación
+
+**Ventajas:**
+
+- Reduce sobreajuste de árboles individuales
+- Alternativa más rápida que redes neuronales
+- Ideal para aplicaciones en tiempo real
+
+---
+
+## Preparando los Datos de Pingüinos
+
+```{python}
+# | echo: true
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+
+penguins = sns.load_dataset('penguins')
+
+species_names = penguins.species.unique()
+feature_names = ['bill_length_mm', 'bill_depth_mm', 
+                 'flipper_length_mm', 'body_mass_g']
+penguins.dropna(subset=feature_names, inplace=True)
+
+X = penguins[feature_names]
+y = penguins.species
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=5, stratify=y
+)
+```
+
+---
+
+## Implementando Random Forest
+
+```{python}
+# | echo: true
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import plot_tree
+
+# n_estimators = número de árboles en el bosque
+forest = RandomForestClassifier(
+    n_estimators=100, 
+    max_depth=5, 
+    min_samples_leaf=1, 
+    random_state=0
+) 
+
+forest.fit(X_train, y_train)
+print(forest.score(X_test, y_test))
+```
+
+**Resultado:** Generalmente mejor que un árbol individual
+
+---
+
+## Visualizando los Primeros 5 Árboles
+
+```{python}
+# | echo: true
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(nrows=1, ncols=5, figsize=(12,6))
+
+for index in range(0, 5):
+    plot_tree(forest.estimators_[index], 
+        class_names=species_names,
+        feature_names=feature_names, 
+        filled=True, 
+        ax=axes[index])
+    axes[index].set_title(f'Tree: {index}')
+    
+plt.show()
+```
+
+---
+
+## Resultado: Árboles Diversos
+
+![Random Forest Trees](../fig/rf_5_trees.png)
+
+**Observación:** Cada árbol toma decisiones diferentes pero complementarias
+
+---
+
+## Espacio de Clasificación de Random Forest
+
+```{python}
+# | echo: true
+f1 = feature_names[0]  # bill_length_mm
+f2 = feature_names[3]  # body_mass_g
+
+forest_2d = RandomForestClassifier(
+    n_estimators=100, max_depth=5, 
+    min_samples_leaf=1, random_state=0
+)
+forest_2d.fit(X_train[[f1, f2]], y_train)
+
+d = DecisionBoundaryDisplay.from_estimator(forest_2d, X_train[[f1, f2]])
+sns.scatterplot(X_train, x=f1, y=f2, hue=y_train)
+plt.show()
+```
+
+---
+
+## Resultado: Menos Sobreajuste
+
+![Random Forest Classification Space](../fig/EM_rf_clf_space.png)
+
+**Mejora:** Menos regiones de un solo punto comparado con árboles individuales
+
+# Stacking con Regresión
+
+---
+
+## Nuevo Dataset: California Housing
+
+```{python}
+# | echo: true
+from sklearn.datasets import fetch_california_housing
+
+X, y = fetch_california_housing(return_X_y=True, as_frame=True)
+
+print(X.shape)  # (20640, 8)
+print(X.head())
+print("Precios de vivienda (target):")
+print(y.head())  # En unidades de $100,000
+```
+
+**Características:** Ingreso mediano, edad de casa, habitaciones promedio, etc.
+**Target:** Valor mediano de vivienda
+
+---
+
+## Dividiendo los Datos
+
+```{python}
+# | echo: true
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=5
+)
+
+print(f'train size: {X_train.shape}')
+print(f'test size: {X_test.shape}')
+```
+
+---
+
+## ¿Random Forest para Regresión?
+
+**Pregunta común:** ¿No son los árboles para clasificación?
+
+**Respuesta:** Los árboles pueden predecir valores numéricos
+- Agrupan valores en bins
+- Funciona bien para datos periódicos/repetitivos
+- Muy sensibles → perfectos para ensemble
+
+---
+
+## ¿Ensemble de Ensembles?
+
+**Pregunta:** ¿Random Forest no es ya un ensemble?
+
+**Respuesta:** ¡Sí! Pero podemos tratarlo como un modelo complejo
+- **Increíble flexibilidad:** Ensemble de ensembles
+- Scikit-learn permite esta composición fácilmente
+
+---
+
+## Implementando Voting Regressor
+
+```{python}
+# | echo: true
+from sklearn.ensemble import (
+    GradientBoostingRegressor,
+    RandomForestRegressor,
+    VotingRegressor,
+)
+from sklearn.linear_model import LinearRegression
+
+# Inicializar estimadores base
+rf_reg = RandomForestRegressor(random_state=5)
+gb_reg = GradientBoostingRegressor(random_state=5)
+linear_reg = LinearRegression()
+
+# Crear el voting regressor
+voting_reg = VotingRegressor([
+    ("rf", rf_reg), 
+    ("gb", gb_reg), 
+    ("lr", linear_reg)
+])
+```
+
+---
+
+## Entrenando Todos los Modelos
+
+```{python}
+# | echo: true
+# Entrenar voting regressor
+voting_reg.fit(X_train, y_train)
+
+# También entrenar modelos individuales para comparación
+rf_reg.fit(X_train, y_train)
+gb_reg.fit(X_train, y_train)
+linear_reg.fit(X_train, y_train)
+```
+
+---
+
+## Visualizando las Predicciones
+
+```{python}
+# | echo: true
+X_test_20 = X_test[:20]  # Primeras 20 para visualización
+
+rf_pred = rf_reg.predict(X_test_20)
+gb_pred = gb_reg.predict(X_test_20)
+linear_pred = linear_reg.predict(X_test_20)
+voting_pred = voting_reg.predict(X_test_20)
+
+plt.figure()
+plt.plot(gb_pred, "o", color="black", label="GradientBoosting")
+plt.plot(rf_pred, "o", color="blue", label="RandomForest")
+plt.plot(linear_pred, "o", color="green", label="LinearRegression")
+plt.plot(voting_pred, "x", color="red", ms=10, label="VotingRegressor")
+
+plt.ylabel("predicted")
+plt.xlabel("training samples")
+plt.legend(loc="best")
+plt.title("Predicciones de regresores y su promedio")
+plt.show()
+```
+
+---
+
+## Resultado: Promedio de Predicciones
+
+![Voting Regressor Predictions](../fig/house_price_voting_regressor.svg)
+
+**Observación:** El ensemble (rojo) es un promedio ponderado de los modelos individuales
+
+---
+
+## Comparando Rendimientos
+
+```{python}
+# | echo: true
+print(f'Random Forest: {rf_reg.score(X_test, y_test):.3f}')
+print(f'Gradient Boost: {gb_reg.score(X_test, y_test):.3f}')
+print(f'Linear Regression: {linear_reg.score(X_test, y_test):.3f}')
+print(f'Voting Regressor: {voting_reg.score(X_test, y_test):.3f}')
+```
+
+**Resultados típicos:** 0.61-0.82
+- El ensemble generalmente iguala o supera al mejor modelo individual
+- Reduce el riesgo de sobreajuste
+
+---
+
+## Ejercicio Práctico
+
+**Desafío:** Implementar un VotingClassifier para los pingüinos
+
+**Modelos sugeridos:**
+
+- Random Forest
+- SVM  
+- Decision Tree
+
+**Tiempo:** 10 minutos
+
+---
+
+## Código Base para el Ejercicio
+
+```{python}
+# | echo: true
+penguins = sns.load_dataset('penguins')
+
+feature_names = ['bill_length_mm', 'bill_depth_mm', 
+                 'flipper_length_mm', 'body_mass_g']
+penguins.dropna(subset=feature_names, inplace=True)
+
+X = penguins[feature_names]
+y = penguins.species
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=5
+)
+```
+
+---
+
+## Guía del Ejercicio
+
+```{python}
+# | echo: true
+# 1. Importar clasificadores
+from sklearn.ensemble import VotingClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+
+# 2. Instanciar clasificadores
+# 3. Ajustar clasificadores individuales
+# 4. Instanciar y ajustar voting classifier
+# 5. Hacer predicciones
+# 6. Comparar scores
+```
+
+---
+
+# Resumen y Conclusiones
+
+---
+
+## Conceptos Clave Aprendidos
+
+**Clasificación:**
+
+- Métodos supervisados para categorías discretas
+- Importancia del train-test split
+- Hiperparámetros y su ajuste
+
+**Modelos:**
+
+- Árboles de decisión: interpretables, propensos a sobreajuste
+- SVM: potentes para alta dimensionalidad, requieren estandarización
+
+---
+
+## Métodos de Ensemble
+
+**Tipos principales:**
+
+- **Stacking:** Diversidad de modelos
+- **Bagging:** Reducir varianza (Random Forest)
+- **Boosting:** Aprender de errores secuencialmente
+
+**Beneficios:** Mejor generalización, menor sobreajuste
+
+---
+
+## Cuándo Usar Cada Método
+
+**Árboles de Decisión:** Interpretabilidad es clave
+
+**SVM:** Datos complejos, alta precisión
+
+**Random Forest:** Balance entre interpretabilidad y rendimiento
+
+**Ensemble:** Máximo rendimiento, problemas críticos
+
+---
+
+## Mejores Prácticas
+
+1. **Comenzar simple:** Modelo básico primero
+2. **Evaluar correctamente:** Train-test split apropiado
+3. **Estandarizar cuando sea necesario:** Modelos basados en distancia
+4. **Considerar ensemble:** Para problemas importantes
+5. **Validar hiperparámetros:** Evitar sobreajuste
+
+---
+
+## Próximos Pasos
+
+**Para profundizar:**
+
+- Cross-validation para mejor evaluación
+- Grid search para optimización de hiperparámetros
+- Métricas más sofisticadas (precision, recall, F1)
+- Ensemble methods más avanzados (XGBoost, LightGBM)
+
+---
+
+## ¡Preguntas y Discusión!
+
+**¿Dudas sobre:**
+
+- Conceptos teóricos
+- Implementación práctica  
+- Cuándo usar cada método
+- Casos de uso específicos
+
+**Tiempo para experimentar con los códigos presentados**
+
+---
+
+## Recursos Adicionales
+
+**Documentación:**
+
+- [Scikit-learn Classification](https://scikit-learn.org/stable/supervised_learning.html#supervised-learning)
+- [Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)
+
+**Datasets para practicar:**
+
+- Iris (clasificación clásica)
+- Titanic (clasificación binaria)
+- Boston Housing (regresión)

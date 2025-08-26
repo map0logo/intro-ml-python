@@ -1,0 +1,729 @@
+---
+title: Python para Aprendizaje Automático 3
+subtitle: Métodos No Supervisados
+date: last-modified
+author:
+  - name: Francisco Palm
+    orcid: 0000-0002-1293-0868
+    email: fpalm@qu4nt.com
+    affiliations: qu4nt, activistasxsl
+format:
+  clean-revealjs
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+lang: es
+logo: images/qu4nt-logo.png
+---
+
+# Métodos No Supervisados
+
+## Clustering y Reducción de Dimensionalidad
+
+---
+
+## Agenda
+
+- **Parte I: Introducción al Aprendizaje No Supervisado**
+- **Parte II: Clustering con K-means**
+- **Parte III: Clustering Espectral**
+- **Parte IV: Reducción de Dimensionalidad**
+- **Parte V: Discusión y Casos Prácticos**
+
+---
+
+## ¿Qué es el Aprendizaje No Supervisado?
+
+**Aprendizaje Supervisado**: Tenemos datos etiquetados
+
+- Input → Output conocido
+- Ejemplo: Clasificar especies de pingüinos
+
+**Aprendizaje No Supervisado**: NO tenemos etiquetas
+
+- Solo tenemos los datos de entrada
+- El algoritmo debe encontrar patrones por sí mismo
+
+---
+
+## ¿Cuándo Usar Aprendizaje No Supervisado?
+
+- **Datos insuficientes etiquetados** para entrenar un modelo
+- **Etiquetas de baja calidad** o inexactas
+- **Etiquetar es muy costoso** en tiempo/recursos
+- **No sabemos qué correlaciones** pueden existir
+- **Queremos explorar** la estructura de los datos
+
+---
+
+## Tipos de Aprendizaje No Supervisado
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Clustering
+
+- Agrupar datos similares
+- K-means
+- Clustering espectral
+- DBSCAN
+:::
+
+::: {.column width="50%"}
+### Reducción de Dimensionalidad
+
+- Simplificar representación
+- PCA
+- t-SNE
+- UMAP
+:::
+
+::::
+
+---
+
+# Parte I: Clustering
+
+---
+
+## ¿Qué es Clustering?
+
+**Clustering** = Agrupar datos similares entre sí
+
+- Puntos en el mismo cluster son **similares**
+- Puntos en clusters diferentes son **diferentes**
+- **Sin supervisión**: no sabemos las agrupaciones a priori
+
+---
+
+## Aplicaciones de Clustering
+
+- **Análisis de tendencias** en datos
+- **Segmentación de clientes** en marketing
+- **Compresión de imágenes** (reducir colores)
+- **Detección de anomalías**
+- **Reconocimiento de patrones**
+
+---
+
+## K-means: Conceptos Básicos
+
+**K-means** busca `k` centros que minimicen la distancia total
+
+### Algoritmo:
+1. Elegir `k` (número de clusters)
+2. Inicializar `k` centros aleatoriamente
+3. Asignar cada punto al centro más cercano
+4. Recalcular centros como promedio de puntos asignados
+5. Repetir pasos 3-4 hasta convergencia
+
+---
+
+## K-means: Hiperparámetro K
+
+```{python}
+# | echo: true
+# K es un hiperparámetro que debemos especificar
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.cluster import KMeans
+
+kmeans = KMeans(n_clusters=4)  # ¿Por qué 4?
+```
+
+**Problema**: ¿Cómo elegir K?
+
+**Estrategias**:
+
+- Probar diferentes valores de K
+- Usar métricas de evaluación (Silhouette Score)
+- Conocimiento del dominio
+
+---
+
+## Implementación con Scikit-Learn
+
+```{python}
+# | echo: true
+import sklearn.cluster as skl_cluster
+import sklearn.datasets as skl_datasets
+
+# Generar datos de ejemplo
+data, labels = skl_datasets.make_blobs(
+    n_samples=400, 
+    cluster_std=0.75, 
+    centers=4, 
+    random_state=1
+)
+```
+
+---
+
+## K-means: Ajuste del Modelo
+
+```{python}
+# | echo: true
+# Inicializar K-means
+kmeans = skl_cluster.KMeans(n_clusters=4)
+
+# Entrenar el modelo
+kmeans.fit(data)
+
+# Predecir clusters
+clusters = kmeans.predict(data)
+
+# Obtener centros
+centers = kmeans.cluster_centers_
+```
+
+---
+
+## Evaluando Calidad: Silhouette Score
+
+**Silhouette Score** mide qué tan bien ajustado está cada punto:
+
+- **+1**: Perfectamente asignado a su cluster
+- **0**: En la frontera entre clusters  
+- **-1**: Probablemente mal asignado
+
+```{python}
+# | echo: true
+from sklearn.metrics import silhouette_score
+
+score = silhouette_score(data, clusters)
+print(f"Silhouette Score: {score:.2f}")
+```
+
+---
+
+## Ejercicio Práctico: Encontrar K Óptimo
+
+**Pregunta**: ¿Cuántos clusters deberíamos usar?
+
+**Tarea**: 
+- Probar K = 2 a 10
+- Calcular Silhouette Score para cada K
+- ¿Qué K da el mejor score?
+
+---
+
+## Limitaciones de K-means
+
+### Problemas comunes:
+
+- **Requiere conocer K** de antemano
+- **Solo fronteras lineales** entre clusters
+- **Forma esférica** de clusters
+- **Sensible a outliers**
+- **Clusters superpuestos** son problemáticos
+
+---
+
+## K-means: Clusters Concéntricos
+
+![Problema de clusters concéntricos](https://via.placeholder.com/400x300/lightgray/black?text=Circles)
+
+K-means **falla** cuando un cluster está dentro de otro
+
+---
+
+## Ventajas de K-means
+
+- **Algoritmo simple** y fácil de entender
+- **Computacionalmente eficiente**
+- **Buena primera opción** para clustering
+- **Escalable** a datasets grandes
+- **Poca memoria** requerida
+
+---
+
+# Parte II: Clustering Espectral
+
+---
+
+## ¿Qué es Clustering Espectral?
+
+**Clustering Espectral** supera las limitaciones lineales de K-means
+
+### Idea clave:
+
+- Trata clustering como **partición de grafos**
+- Busca nodos con **distancias pequeñas** entre sí
+- Usa **"kernel tricks"** para añadir dimensiones
+
+---
+
+## Clustering Espectral: Intuición
+
+**Problema**: Círculos concéntricos
+
+**Solución**: Añadir una dimensión Z que "separe" los círculos
+
+- Círculo interior → Z alto
+- Círculo exterior → Z bajo
+- Ahora K-means funciona en 3D
+
+---
+
+## Implementación de Clustering Espectral
+
+```{python}
+# | echo: true
+import sklearn.datasets as skl_data
+import sklearn.cluster as skl_cluster
+
+# Crear círculos concéntricos
+circles, labels = skl_data.make_circles(
+    n_samples=400, 
+    noise=0.01, 
+    random_state=0
+)
+
+# Clustering espectral
+model = skl_cluster.SpectralClustering(
+    n_clusters=2,
+    affinity='nearest_neighbors',
+    assign_labels='kmeans'
+)
+
+labels_spectral = model.fit_predict(circles)
+```
+
+---
+
+## Comparación: K-means vs Espectral
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### K-means
+- ❌ Fronteras lineales
+- ❌ Falla con círculos
+- ✅ Muy rápido
+- ✅ Poca memoria
+:::
+
+::: {.column width="50%"}
+### Espectral  
+- ✅ Fronteras no-lineales
+- ✅ Maneja círculos
+- ❌ Más lento
+- ❌ Más memoria
+:::
+
+::::
+
+---
+
+## Costo Computacional
+
+**Ejercicio de Timing**:
+
+```{python}
+# | echo: true
+import time
+
+start_time = time.time()
+# ... algoritmo de clustering ...
+end_time = time.time()
+
+print(f"Tiempo: {end_time - start_time:.2f} segundos")
+```
+
+**Pregunta**: ¿Cuál es más rápido para 4,000 puntos?
+
+---
+
+## Resultados de Performance
+
+### 4,000 puntos:
+
+- **K-means**: ~4 segundos
+- **Espectral**: ~9 segundos (2.25x más lento)
+
+### 8,000 puntos:
+
+- **K-means**: ~5.6 segundos  
+- **Espectral**: ~24 segundos (4.28x más lento)
+
+**La diferencia aumenta exponencialmente** 📈
+
+---
+
+# Parte III: Reducción de Dimensionalidad
+
+---
+
+## ¿Por Qué Reducir Dimensiones?
+
+**Problema**: Datos de alta dimensionalidad
+
+- Imágenes 28×28 = 784 dimensiones
+- Difícil de visualizar
+- Clustering lento
+- "Maldición de la dimensionalidad"
+
+**Solución**: Representar en menos dimensiones manteniendo información clave
+
+---
+
+## Dataset MNIST
+
+**MNIST**: Dígitos escritos a mano (0-9)
+
+- **70,000 imágenes** originales (28×28 píxeles)
+- **Scikit-learn subset**: 1,797 imágenes (8×8 píxeles)
+- **64 dimensiones** (una por píxel)
+- **Valores**: 0-15 (4 bits)
+
+---
+
+## Cargando el Dataset MNIST
+
+```{python}
+# | echo: true
+from sklearn import datasets
+
+# Cargar datos
+features, labels = datasets.load_digits(
+    return_X_y=True, 
+    as_frame=True
+)
+
+print(features.shape)  # (1797, 64)
+print(labels.shape)    # (1797,)
+```
+
+---
+
+## Visualizando una Imagen
+
+```{python}
+# | echo: true
+# Tomar la primera imagen
+image_1D = features.iloc[0]
+image_2D = np.array(image_1D).reshape(-1, 8)
+
+# Mostrar imagen
+plt.imshow(image_2D, cmap="gray_r")
+plt.show()
+```
+
+**64 números** → **1 imagen reconocible**
+
+---
+
+## El Problema de 64 Dimensiones
+
+- **Imposible visualizar** 64 dimensiones
+- **Clustering directo** sería muy lento  
+- **Relaciones complejas** entre píxeles
+- ¿Podemos **simplificar** sin perder información?
+
+---
+
+# Análisis de Componentes Principales (PCA)
+
+---
+
+## ¿Qué es PCA?
+
+**PCA** = Principal Component Analysis
+
+**Objetivo**: Encontrar las direcciones de máxima varianza
+
+- **Componente 1**: Dirección con más variación
+- **Componente 2**: Segunda dirección con más variación  
+- **Componente 3**: Tercera dirección...
+
+---
+
+## PCA: Implementación
+
+```{python}
+# | echo: true
+from sklearn import decomposition
+
+# PCA con 2 componentes
+pca = decomposition.PCA(n_components=2)
+x_pca = pca.fit_transform(features)
+
+print(x_pca.shape)  # (1797, 2)
+```
+
+**64 dimensiones** → **2 dimensiones**
+
+---
+
+## Visualizando PCA
+
+```{python}
+# | echo: true
+# Visualizar sin etiquetas
+plt.scatter(x_pca[:, 0], x_pca[:, 1])
+plt.title("PCA - Sin etiquetas")
+plt.show()
+
+# Visualizar con etiquetas verdaderas  
+plt.scatter(x_pca[:, 0], x_pca[:, 1], c=labels)
+plt.colorbar()
+plt.title("PCA - Con etiquetas")
+plt.show()
+```
+
+---
+
+## PCA + K-means
+
+```{python}
+# | echo: true
+# Clustering en espacio reducido PCA
+kmeans = skl_cluster.KMeans(n_clusters=10)
+kmeans.fit(x_pca)
+clusters_pca = kmeans.predict(x_pca)
+
+# Visualizar clusters
+plt.scatter(x_pca[:, 0], x_pca[:, 1], c=clusters_pca)
+plt.title("PCA + K-means")
+plt.show()
+```
+
+---
+
+## Resultados PCA
+
+**Observaciones**:
+
+- Algunos dígitos se agrupan bien (0, 1, 4, 6)
+- Otros se superponen mucho (5, 8)
+- **PCA es lineal** → limitaciones con patrones complejos
+- **Preserva estructura global** → puede perder detalles locales
+
+---
+
+# t-SNE: Embedding Estocástico
+
+---
+
+## ¿Qué es t-SNE?
+
+**t-SNE** = t-distributed Stochastic Neighbor Embedding
+
+### Características:
+
+- **No-lineal** (vs PCA lineal)  
+- **Preserva vecindarios locales**
+- **Manifold learning**
+- **No-determinístico** (resultados varían)
+
+---
+
+## Concepto de Manifold
+
+**Manifold** = Superficie de baja dimensión en espacio de alta dimensión
+
+**Analogía**: Papel arrugado
+
+- Existe en espacio 3D (arrugado)
+- Pero es inherentemente 2D (superficie del papel)
+- **Manifold learning** = "desarrugar" los datos
+
+---
+
+## Intuición de t-SNE
+
+**Objetivo**: Mantener vecinos cercanos juntos
+
+**Analogía**: Mover amigos del parque grande a jardín pequeño
+
+- **Prioridad**: Amigos que hablan juntos permanezcan cerca
+- **Sacrificio**: Distancias entre grupos pueden distorsionarse
+
+---
+
+## t-SNE: Implementación
+
+```{python}
+# | echo: true
+from sklearn import manifold
+
+# t-SNE con inicialización PCA
+tsne = manifold.TSNE(
+    n_components=2, 
+    init='pca', 
+    random_state=0
+)
+x_tsne = tsne.fit_transform(features)
+
+plt.scatter(x_tsne[:, 0], x_tsne[:, 1])
+plt.title("t-SNE - Sin etiquetas")
+plt.show()
+```
+
+---
+
+## t-SNE + K-means
+
+```{python}
+# | echo: true
+# Clustering en espacio t-SNE
+kmeans = skl_cluster.KMeans(n_clusters=10)
+kmeans.fit(x_tsne)
+clusters_tsne = kmeans.predict(x_tsne)
+
+# Visualizar
+plt.scatter(x_tsne[:, 0], x_tsne[:, 1], c=clusters_tsne)
+plt.title("t-SNE + K-means")
+plt.show()
+```
+
+---
+
+## Comparación: PCA vs t-SNE
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### PCA
+- ✅ Rápido
+- ✅ Determinístico  
+- ✅ Preserva estructura global
+- ❌ Solo lineal
+- ❌ Clusters superpuestos
+:::
+
+::: {.column width="50%"}
+### t-SNE
+- ❌ Lento
+- ❌ No-determinístico
+- ❌ Distorsiona distancias globales
+- ✅ No-lineal
+- ✅ Excelente separación local
+:::
+
+::::
+
+---
+
+## Interpretando t-SNE
+
+**⚠️ Cuidado con la interpretación**:
+
+- **Distancias entre clusters** pueden ser engañosas
+- **Clusters lejanos** en t-SNE pueden estar cerca en realidad
+- **Clusters cercanos** en t-SNE pueden estar lejos en realidad
+- **Usar para exploración**, no para inferencias de distancia
+
+---
+
+## Ejercicio: 3 Dimensiones
+
+**Pregunta**: ¿3D es mejor que 2D?
+
+```{python}
+# | echo: true
+# PCA 3D
+pca_3d = decomposition.PCA(n_components=3)
+x_pca_3d = pca_3d.fit_transform(features)
+
+# t-SNE 3D  
+tsne_3d = manifold.TSNE(n_components=3, init='pca')
+x_tsne_3d = tsne_3d.fit_transform(features)
+
+# Plotting 3D...
+```
+
+---
+
+## Hiperparámetros en t-SNE
+
+**Parámetros importantes**:
+
+- `perplexity`: Número efectivo de vecinos cercanos
+- `learning_rate`: Velocidad de optimización  
+- `n_iter`: Número de iteraciones
+- `init`: Inicialización ('pca' vs 'random')
+
+**Requiere experimentación** para cada dataset
+
+---
+
+## Casos de Uso Prácticos
+
+### PCA mejor para:
+
+- **Análisis exploratorio** rápido
+- **Pre-procesamiento** para otros algoritmos
+- **Compresión** de datos
+- **Datasets grandes**
+
+### t-SNE mejor para:
+
+- **Visualización** de clusters complejos
+- **Detección de patrones** no-lineales  
+- **Análisis cualitativo** detallado
+- **Datasets medianos**
+
+---
+
+## Otros Algoritmos
+
+**Más técnicas disponibles**:
+
+- **UMAP**: Más rápido que t-SNE, preserva más estructura global
+- **Isomap**: Para manifolds no-lineales  
+- **LLE**: Locally Linear Embedding
+- **Factor Analysis**: Similar a PCA pero probabilístico
+
+---
+
+## Consideraciones Prácticas
+
+### Automatización:
+
+- **¿Qué pasa si el algoritmo falla?**
+- **¿Cómo validar resultados?**
+- **¿Sistemas críticos vs exploración?**
+
+### Mejores prácticas:
+
+- **Siempre validar** con múltiples métodos
+- **Entender limitaciones** de cada técnica
+- **Combinar** métodos complementarios
+
+---
+
+## Resumen: Métodos No Supervisados
+
+### Clustering:
+
+- **K-means**: Rápido, simple, fronteras lineales
+- **Espectral**: Fronteras complejas, más costoso
+
+### Reducción de Dimensionalidad:
+
+- **PCA**: Lineal, rápido, preserva estructura global  
+- **t-SNE**: No-lineal, lento, excelente para visualización
+
+---
+
+## Workflow Recomendado
+
+1. **Exploración inicial** con PCA
+2. **Visualización detallada** con t-SNE  
+3. **Clustering** en espacio reducido
+4. **Validación** con métricas apropiadas
+5. **Interpretación cuidadosa** de resultados
+
+---
+
+## Preguntas y Discusión
+
+**¿Preguntas sobre**:
+
+- Clustering vs Clasificación?
+- Cuándo usar cada técnica?
+- Casos específicos de su trabajo?
+- Implementación práctica?
+
+**¡Gracias por su atención!** 🎯

@@ -1,0 +1,1722 @@
+---
+title: Fundamentos de Python
+subtitle: Un curso rápido y furioso
+date: last-modified
+author:
+  - name: Francisco Palm
+    orcid: 0000-0002-1293-0868
+    email: fpalm@qu4nt.com
+    affiliations: qu4nt, activistasxsl
+format:
+  clean-revealjs
+html-math-method:
+  method: mathjax
+  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+lang: es
+logo: images/qu4nt-logo.png
+---
+
+# Fundamentos de Python
+
+## ¿Por qué Python?
+
+\
+
+-   **Versátil**: Análisis de datos, web development, IA, automatización
+-   **Legible**: Sintaxis clara y expresiva
+-   **Comunidad**: Amplio ecosistema de librerías
+-   **Jupyter**: Entorno interactivo ideal para exploración de datos
+
+## Configuración del Entorno
+
+\
+
+``` bash
+# Instalar uv (gestor de entornos Python)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Crear un nuevo entorno
+uv init proyecto01
+cd proyecto01
+
+# Activar el entorno
+source .venv/bin/activate
+
+# Instalar dependencias
+uv add jupyterlab pandas numpy
+```
+
+## Ejecutando Python - JupyterLab
+
+\
+
+-   Entorno interactivo para programar
+-   Combina código, texto y visualizaciones
+-   Ideal para exploración de datos
+
+``` bash
+# Iniciar JupyterLab
+uv run jupyter lab
+```
+
+## Interfaz de JupyterLab
+
+\
+
+### Componentes principales:
+
+-   **Barra de menú**: Acciones principales (File, Edit, Run...)
+-   **Barra lateral izquierda**: Navegador de archivos, kernels
+-   **Área de trabajo**: Notebooks, scripts, terminales
+
+### Tipos de archivos:
+
+-   **Scripts Python** (`.py`): Código ejecutable
+-   **Notebooks** (`.ipynb`): Código + documentación + resultados
+
+## Tipos de Celdas
+
+-   **Celdas de código**: Ejecutan Python
+-   **Celdas de Markdown**: Documentación formateada
+
+![Interfaz jupyter](images/interface-jupyterlab.webp){fig-align="center"}
+
+## Modos de Edición
+
+\
+
+### Modo Comando (borde gris) - Presiona `Esc`
+
+-   `b`: Nueva celda abajo
+-   `a`: Nueva celda arriba\
+-   `x`: Eliminar celda
+-   `m`: Convertir a Markdown
+-   `y`: Convertir a código
+
+### Modo Edición (borde azul) - Presiona `Enter`
+
+-   Editar contenido de la celda
+-   `Shift + Enter`: Ejecutar celda
+
+## Variables y Asignación
+
+\
+
+```{python}
+#| echo: true
+
+# Asignación de valores
+nombre = "María"
+edad = 28
+altura = 1.75
+
+# Las variables persisten entre celdas
+print(nombre, "tiene", edad, "años")
+```
+
+## Reglas para Nombres de Variables
+
+\
+
+-   Letras, números y guiones bajos
+-   No puede comenzar con número
+-   **Case sensitive**: `edad ≠ Edad ≠ EDAD`
+-   Los nombres significativos mejoran la legibilidad
+
+## Tipos de Datos Básicos
+
+\
+
+```{python}
+#| echo: true
+
+# Enteros (int)
+puntos = 100
+print(f"{puntos} puntos, tipo: {type(puntos)}")
+
+# Decimales (float)
+temperatura = 36.5
+print(f"{temperatura} puntos, tipo: {type(temperatura)}")
+
+# Cadenas de texto (str)
+mensaje = "Hola mundo"
+print(f"{mensaje} puntos, tipo: {type(mensaje)}")
+
+# Booleanos (bool)
+es_valido = True
+print(f"{es_valido} puntos, tipo: {type(es_valido)}")
+
+```
+
+## Conversión entre Tipos
+
+\
+
+``` python
+# Conversión explícita
+numero_texto = "123"
+numero = int(numero_texto)
+decimal = float("45.67")
+
+# De número a texto
+texto = str(100)  # "100"
+
+# Errores comunes
+# int("abc")  # Error ValueError
+```
+
+## Operaciones aritméticas
+
+\
+
+```{python}
+#| echo: true
+# Operaciones básicas
+print(5 + 3)      # 8 (suma)
+print(5 - 3)      # 2 (resta)  
+print(5 * 3)      # 15 (multiplicación)
+print(5 / 3)      # 1.666... (división)
+print(2**3)       # 8 (potencia)
+
+# División entera y módulo
+print(5 // 3)     # 1 (división entera)
+print(5 % 3)      # 2 (módulo)
+```
+
+## Operaciones con Strings
+
+\
+
+``` python
+# Concatenación
+nombre_completo = "Ana" + " " + "García"
+
+# Repetición
+separador = "-" * 20  # "--------------------"
+
+# Longitud
+longitud = len(nombre_completo)  # 10
+```
+
+## Indexación y Slicing
+
+```{python}
+#| echo: true
+elemento = 'carbono'
+print(elemento[0])        # 'c' (primer carácter)
+print(elemento[1:4])      # 'arb' (del índice 1 al 3)
+print(elemento[:3])       # 'car' (primeros 3)
+print(elemento[3:])       # 'bono' (del índice 3 al final)
+print(elemento[1::2])     # 'arbn' (primeros 5, saltando 2)
+print(elemento[::-1])     # 'onobrac' (invertido)
+print(len(elemento))      # 7 (longitud)
+```
+
+### Indices negativos
+
+```{python}
+#| echo: true
+print(elemento[-1])       # 'o' (último carácter)
+print(elemento[-3:])      # 'ono' (últimos 3)
+```
+
+## La Función print()
+
+\
+
+```{python}
+#| echo: true
+
+# Imprimir múltiples valores
+print("Valor:", 42, "Resultado:", True)
+
+# Separador personalizado
+print("A", "B", "C", sep="-")  # A-B-C
+
+# Final personalizado
+print("Hola", end=" ")
+print("Mundo")  # Hola Mundo
+```
+
+## Métodos de Strings
+
+\
+
+```{python}
+#| echo: true
+texto = " Python es Genial! "
+
+# Métodos comunes
+mayusculas = texto.upper()      # " PYTHON ES GENIAL! "
+print(mayusculas)
+minusculas = texto.lower()      # " python es genial! "ç
+print(minusculas)
+sin_espacios = texto.strip()    # "Python es Genial!"
+print(sin_espacios)
+reemplazo = texto.replace("Genial", "Increíble")
+print(reemplazo)
+```
+
+## Obteniendo Ayuda
+
+\
+
+``` python
+# Usando help()
+help(round)
+
+# En Jupyter: Shift + Tab
+# O usando ?
+len?
+```
+
+## Errores Comunes
+
+\
+
+### Error de Sintaxis
+
+``` python
+# INCORRECTO - falta comilla de cierre
+nombre = 'Ana García
+# SyntaxError: EOL while scanning string literal
+
+# INCORRECTO - doble igual en asignación  
+edad = = 25
+# SyntaxError: invalid syntax
+```
+
+### Error de Nombre
+
+``` python
+edad = 30
+print(edat)  # NameError: name 'edat' is not defined
+```
+
+## Error de Tipo
+
+\
+
+### Operaciones incompatibles
+
+``` python
+# INCORRECTO - no se puede restar strings
+print('hola' - 'h')
+# TypeError: unsupported operand type(s) for -: 'str' and 'str'
+
+# INCORRECTO - no se puede sumar int y str  
+print(1 + '2')
+# TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+# CORRECTO - convertir tipos
+print(1 + int('2'))    # 3
+print(str(1) + '2')    # '12'
+```
+
+## Depuración Básica
+
+\
+
+-   Leer mensajes de error cuidadosamente
+-   Verificar nombres de variables
+-   Revisar paréntesis y comillas
+-   Usar print() para ver valores intermedios
+
+## Ejercicio Práctico 1
+
+\
+
+``` python
+# Calcular área y perímetro de un rectángulo
+ancho = 10
+alto = 5
+
+area = ancho * alto
+perimetro = 2 * (ancho + alto)
+
+print("Área:", area)
+print("Perímetro:", perimetro)
+```
+
+Usando el anterior ejemplo como guía, escribir un script que calcule el volumen de un cilindro.
+
+## Ejercicio Práctico 2
+
+\
+
+```{python}
+#| echo: true
+# Formatear información personal
+nombre = "Carla"
+edad = 30
+ciudad = "Maracay"
+
+# Crear mensaje formateado
+mensaje = f"Su nombre es {nombre}, tiene {edad} años y vive en {ciudad}."  # f-string
+print(mensaje)
+```
+
+Usando el anterior ejemplo como guía, escribir un script que escriba una dirección en el formato "Calle 123 no 456, Ciudad: Bogotá, País: Colombia".
+
+## Markdown en Jupyter
+
+\
+
+``` markdown
+### Título nivel 3
+
+#### Título nivel 4
+
+- Lista con viñetas
+- Segundo elemento
+
+1. Lista numerada
+2. Segundo elemento
+
+**Negrita** y *itálica*
+
+[Mujeres Activistas XSL](https://activistasxsl.org)
+```
+
+### Ecuaciones LaTeX
+
+``` markdown
+$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$
+```
+
+## Markdown en Jupyter (renderizado en HTML)
+
+### Título nivel 3
+
+#### Título nivel 4
+
+-   Lista con viñetas
+-   Segundo elemento
+
+1.  Lista numerada
+2.  Segundo elemento
+
+**Negrita** y *itálica*
+
+[Mujeres Activistas XSL](https://activistasxsl.org)
+
+$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$
+
+# Funciones Built-in (Incorporadas) Esenciales
+
+## Funciones de información
+
+\
+
+``` python
+# Longitud
+datos = 'análisis de datos'
+print(len(datos))         # 17
+
+# Tipo
+print(type(42))           # <class 'int'>
+print(type('hola'))       # <class 'str'>
+
+# Ayuda
+help(len)                 # Documentación de la función
+```
+
+## Funciones Matemáticas
+
+### Operaciones básicas
+
+``` python
+numeros = [1, 5, 2, 9, 3]
+
+print(max(numeros))       # 9 (máximo)
+print(min(numeros))       # 1 (mínimo)
+print(sum(numeros))       # 20 (suma total)
+
+# Con argumentos múltiples
+print(max(1, 5, 2, 9, 3)) # 9
+print(min('z', 'a', 'm')) # 'a' (orden alfabético)
+```
+
+\
+
+### Redondeo
+
+``` python
+precio = 23.789
+print(round(precio))      # 24 (sin decimales)
+print(round(precio, 2))   # 23.79 (2 decimales)
+```
+
+## Comentarios y Documentación
+
+\
+
+### Tipos de comentarios
+
+``` python
+# Esto es un comentario de línea
+temperatura = 25.5  # Comentario al final de línea
+
+"""
+Esto es un comentario
+de múltiples líneas
+útil para documentación
+"""
+
+# Los comentarios no se ejecutan
+# pero ayudan a entender el código
+resultado = temperatura * 1.8 + 32  # Celsius a Fahrenheit
+```
+
+## Buenas Prácticas
+
+### Nombres descriptivos
+
+``` python
+# ❌ Malo
+x = 25
+y = x * 0.1
+z = x + y
+
+# ✅ Bueno  
+precio_base = 25
+descuento = precio_base * 0.1
+precio_final = precio_base + descuento
+```
+
+\
+
+###  Comentarios útiles
+
+``` python
+# Calcular el impuesto sobre las ventas (10%)
+impuesto = precio * 0.10
+
+# Convertir temperatura de Celsius a Fahrenheit
+fahrenheit = celsius * 9/5 + 32
+```
+
+## Gestión de Dependencias con uv
+
+\
+
+### Comandos útiles
+```bash
+# Añadir nueva dependencia
+uv add pandas matplotlib seaborn
+
+# Instalar dependencias exactas
+uv sync
+
+# Ejecutar script con dependencias
+uv run python mi_script.py
+
+# Ver dependencias instaladas  
+uv tree
+
+# Actualizar dependencias
+uv sync --upgrade
+```
+
+## Tiempo para Preguntas
+
+### ¿Dudas sobre...?
+- Configuración del entorno con uv
+- Sintaxis básica de Python
+- Uso de Jupyter notebooks
+- Tipos de datos y conversiones
+- Manejo de errores comunes
+
+### Recursos de ayuda
+- Documentación oficial de Python
+- Stack Overflow para problemas específicos  
+- Comunidades en Discord/Slack de Python
+- Meetups locales de programación
+
+
+## Bibliotecas en Python
+
+\
+
+### ¿Qué son las bibliotecas?
+- **Colección de módulos**: Funciones y datos organizados por tema
+- **Reutilización de código**: No reinventar la rueda
+- **Especialización**: Cada librería resuelve problemas específicos
+- **Comunidad**: Miles de librerías disponibles
+
+### Tipos de bibliotecas
+- **Librería estándar**: Incluida con Python
+- **PyPI**: Paquetes de terceros (instalables con uv)
+- **Librerías propias**: Las que tú misma creas
+
+---
+
+## Importando Bibliotecas
+
+\
+
+### Sintaxis básica
+```python
+import math
+
+print('π =', math.pi)
+print('cos(π) =', math.cos(math.pi))
+print('√16 =', math.sqrt(16))
+```
+
+\
+
+### Características clave
+- `import` carga el módulo en memoria
+- Acceso con **notación de punto**: `modulo.funcion`
+- **Separación del espacio de nombres**: evita conflictos
+
+---
+
+## Formas de Importar
+
+\
+
+### 1. Importar módulo completo
+```python
+import math
+resultado = math.sqrt(25)
+```
+
+### 2. Importar funciones específicas  
+```python
+from math import sqrt, pi, cos
+resultado = sqrt(25)
+area_circulo = pi * 2**2
+```
+
+
+### 3. Usar alias (apodos)
+```python
+import math as m
+import numpy as np  # Convención muy común
+resultado = m.sqrt(25)
+```
+
+---
+
+## La Biblioteca Estándar
+
+\
+
+### Math - Matemáticas
+```python
+import math
+
+# Constantes
+print(math.pi)      # 3.14159...
+print(math.e)       # 2.71828...
+
+# Funciones trigonométricas
+print(math.sin(math.pi/2))    # 1.0
+print(math.cos(0))            # 1.0
+print(math.degrees(math.pi))  # 180.0
+
+# Funciones de potencia
+print(math.sqrt(16))          # 4.0
+print(math.pow(2, 3))         # 8.0
+```
+
+---
+
+## Random - Números Aleatorios
+
+\
+
+### Funciones útiles
+```python
+import random
+
+# Número aleatorio entre 0 y 1
+print(random.random())        # 0.7834...
+
+# Entero aleatorio en rango
+print(random.randint(1, 10))  # Entre 1 y 10 inclusive
+
+# Elegir elemento aleatorio
+frutas = ['manzana', 'banana', 'naranja']
+print(random.choice(frutas))  # 'banana'
+
+# Mezclar lista
+cartas = [1, 2, 3, 4, 5]
+random.shuffle(cartas)
+print(cartas)                 # [3, 1, 5, 2, 4]
+```
+
+---
+
+## Datetime - Fechas y Horas
+
+\
+
+### Trabajando con fechas
+```python
+from datetime import datetime, date, timedelta
+
+# Fecha y hora actual
+ahora = datetime.now()
+print(f"Ahora: {ahora}")
+
+# Solo fecha
+hoy = date.today()
+print(f"Hoy: {hoy}")
+
+# Operaciones con fechas
+mañana = hoy + timedelta(days=1)
+hace_semana = hoy - timedelta(weeks=1)
+
+print(f"Mañana: {mañana}")
+print(f"Hace una semana: {hace_semana}")
+```
+
+---
+
+## OS - Sistema Operativo
+
+\
+
+### Interacción con archivos y directorios
+```python
+import os
+
+# Directorio actual
+print(os.getcwd())
+
+# Listar archivos
+archivos = os.listdir('.')
+print(archivos[:5])  # Primeros 5 archivos
+
+# Información del sistema
+print(f"Sistema: {os.name}")
+print(f"Usuario: {os.getenv('USER', 'Desconocido')}")
+
+# Rutas de archivos
+ruta = os.path.join('datos', 'ventas', 'enero.csv')
+print(ruta)  # datos/ventas/enero.csv
+```
+
+# Procesamiento de Datos en Python
+
+**Listas, Bucles y Condicionales**
+
+## ¿Cómo podemos almacenar múltiples valores?
+
+\
+
+Hasta ahora, hemos trabajado con variables que guardan un solo valor.
+
+```python
+presion = 0.273
+```
+
+Pero, ¿qué pasa si tenemos cientos o miles de puntos de datos? Necesitamos una forma de agruparlos.
+
+## Las Listas
+
+\
+
+Una **lista** almacena muchos valores en una única estructura.
+
+```python
+presiones = [0.273, 0.275, 0.277, 0.275, 0.276]
+print('presiones:', presiones)
+print('longitud:', len(presiones))
+```
+
+```output
+presiones: [0.273, 0.275, 0.277, 0.275, 0.276]
+longitud: 5
+```
+
+  - Se definen con corchetes `[]`.
+  - Los valores se separan por comas `,`.
+
+-----
+
+## Accediendo datos en Listas
+
+### Acceso por Índice
+
+Usamos el índice para obtener un elemento. ¡Recuerda que la numeración empieza en **0**\!
+
+```python
+presiones = [0.265, 0.275, 0.277, 0.275, 0.276]
+
+# Obtener el primer elemento
+print('primer elemento:', presiones[0])
+
+# Obtener el último elemento
+print('último elemento:', presiones[-1])
+```
+
+### Slicing (Rebanado)
+
+Podemos extraer sub-listas:
+
+```python
+# Del segundo al cuarto elemento
+print(presiones[1:4])
+```
+
+## Modificación de Listas
+
+Las listas son **mutables**: podemos cambiar su contenido.
+
+**Reemplazar un valor:**
+
+```python
+presiones[0] = 0.265
+print('presiones ahora es:', presiones)
+```
+
+**Añadir un valor al final:**
+
+```python
+primos = [2, 3, 5]
+primos.append(7)
+print('primos ahora es:', primos)
+```
+
+**Eliminar un valor:**
+
+```python
+del primos[1] # Elimina el 3
+print('primos sin el 3:', primos)
+```
+
+-----
+
+## ¿Cómo podemos hacer que un programa repita tareas?
+
+\
+
+Imagina que queremos imprimir cada valor de nuestra lista. Escribir `print()` para cada uno sería tedioso y propenso a errores.
+
+## Bucles `for`
+
+\
+
+Un **bucle `for`** ejecuta un bloque de código una vez para cada elemento de una colección.
+
+```{python}
+#| echo: true
+# "Para cada número en la lista de primos, imprime el número"
+primos = [2, 5, 7]
+for numero in primos:
+    print(numero)
+```
+
+## Anatomía de un bucle `for`
+
+\
+
+```python
+primos = [2, 5, 7]
+for numero in primos:
+    print(numero)
+```
+
+  - `for numero in primos:`: La cabecera. Termina con dos puntos `:`.
+  - `numero`: La **variable de bucle**. Toma el valor de cada elemento en cada iteración.
+  - `print(numero)`: El **cuerpo**. Debe estar indentado (generalmente con 4 espacios).
+
+# Patrones Comunes con Bucles
+
+## Iterar sobre un rango de números
+
+\
+
+La función `range(N)` genera una secuencia de números desde 0 hasta N-1.
+
+```{python}
+#| echo: true
+# Imprimir números del 0 al 2
+for i in range(3):
+    print(i)
+```
+
+Es muy útil para repetir una acción un número específico de veces.
+
+## El Patrón Acumulador
+
+\
+
+Usamos un bucle para construir un único valor a partir de una colección.
+
+1.  **Inicializamos** una variable acumuladora.
+2.  **Iteramos** sobre la colección y actualizamos el acumulador.
+
+
+```{python}
+#| echo: true
+# Sumar los números del 1 al 10
+total = 0 # 1. Inicializar
+for i in range(1, 11):
+   total = total + i # 2. Actualizar
+print(total)
+```
+
+## Desafío Rápido: Acumulando Texto
+
+\
+
+::: {.panel-tabset}
+
+### Ejercicio
+
+Completa los espacios para que el programa invierta la cadena de texto "tin" y muestre "nit".
+
+```python
+original = "tin"
+resultado = ____
+for caracter in original:
+    resultado = ____ + resultado
+print(resultado)
+```
+
+### Solución
+
+\
+
+```python
+original = "tin"
+resultado = ""
+for caracter in original:
+    resultado = caracter + resultado
+print(resultado)
+```
+
+:::
+
+## ¿Cómo pueden los programas tomar decisiones?
+
+\
+
+Nuestros programas ejecutan el mismo código sin importar los datos. ¿Cómo podemos hacer que se comporten de manera diferente según las condiciones?
+
+## Condicionales: `if`
+
+Un **condicional** controla si un bloque de código se ejecuta o no.
+
+```python
+masa = 3.54
+if masa > 3.0:
+    print(masa, 'es grande')
+
+masa = 2.07
+if masa > 3.0:
+    print (masa, 'es grande')
+```
+
+```output
+3.54 es grande
+```
+
+  - La estructura es `if condicion:`.
+  - El cuerpo, al igual que en los bucles, debe estar indentado.
+  - La `condicion` debe evaluarse como verdadera (`True`) para que el cuerpo se ejecute.
+
+# Expandiendo las Decisiones: `else` y `elif`
+
+## `if-else`: El Plan B
+
+`else` nos permite ejecutar un bloque de código alternativo si la condición `if` es falsa.
+
+```{python}
+#| echo: true
+masas = [3.54, 2.07, 9.22]
+for m in masas:
+    if m > 3.0:
+        print(m, 'es grande')
+    else:
+        print(m, 'es pequeña')
+```
+
+## `if-elif-else`: Múltiples Caminos
+
+\
+
+`elif` (contracción de "else if") nos permite añadir pruebas adicionales.
+
+```{python}
+#| echo: true
+for m in masas:
+    if m > 9.0:
+        print(m, 'es ENORME')
+    elif m > 3.0:
+        print(m, 'es grande')
+    else:
+        print(m, 'es pequeña')
+```
+
+  - Las condiciones se prueban en orden.
+  - Solo se ejecuta el primer bloque cuya condición sea verdadera.
+
+
+## Desafío Rápido: Recortando Valores
+\
+
+::: {.panel-tabset}
+
+### Ejercicio
+
+Completa los espacios para crear una nueva lista que contenga `0` donde el valor original era negativo y `1` donde era positivo o cero.
+
+```python
+original = [-1.5, 0.2, 0.4, 0.0, -1.3, 0.4]
+resultado = ____
+for valor in original:
+    if ____:
+        resultado.append(0)
+    else:
+        ____
+print(resultado)
+```
+
+### Solución
+
+\
+
+```python
+original = [-1.5, 0.2, 0.4, 0.0, -1.3, 0.4]
+resultado = []
+for valor in original:
+    if valor < 0.0:
+        resultado.append(0)
+    else:
+        resultado.append(1)
+print(resultado)
+```
+
+:::
+
+## ¿Cómo procesar muchos archivos a la vez?
+
+\
+
+Escribir el nombre de cada archivo manualmente es impráctico.
+
+```python
+for nombre_archivo in ['../data/gdp_africa.csv', '../data/gdp_asia.csv']:
+    # procesar archivo...
+```
+
+Necesitamos una forma de encontrar archivos que coincidan con un patrón.
+
+## El Módulo `glob`
+
+La librería `glob` nos permite encontrar archivos usando "comodines" o "wildcards".
+
+  - `*`: Coincide con cero o más caracteres.
+  - `?`: Coincide con exactamente un carácter.
+
+`glob.glob()` devuelve una lista de nombres de archivo que coinciden con el patrón.
+
+```{python}
+#| echo: true
+import glob
+# Encontrar todos los archivos CSV en el directorio 'data'
+nombres_archivos = glob.glob('../data/*.csv')
+print(nombres_archivos)
+```
+
+-----
+
+## El Patrón Definitivo: `glob` + `for`
+
+\
+
+Ahora podemos combinar todo lo que hemos aprendido para automatizar el procesamiento de datos.
+
+**El patrón:**
+
+1.  Usa `glob.glob()` para obtener una lista de nombres de archivo.
+2.  Usa un bucle `for` para iterar sobre esa lista.
+3.  Dentro del bucle, abre y procesa cada archivo.
+
+---
+
+## El Patrón en Acción
+
+\
+
+```{python}
+#| echo: true
+import glob
+import pandas as pd
+
+# 1. Obtener la lista de archivos de datos regionales
+for nombre_archivo in glob.glob('../data/gapminder_gdp_*.csv'):
+    # 2. Leer cada archivo
+    datos = pd.read_csv(nombre_archivo)
+    # 3. Aplicar lógica condicional
+    if len(datos) > 50:
+      print(nombre_archivo, 'tiene más de 50 registros.')
+```
+
+-----
+
+## Resumen de Puntos Clave
+
+\
+
+  - **Listas `[]`**: Colecciones ordenadas y mutables de valores.
+  - **Bucles `for`**: Para repetir acciones sobre cada elemento de una colección.
+  - **Condicionales `if/elif/else`**: Para ejecutar código selectivamente basado en condiciones.
+  - **`glob`**: Para encontrar conjuntos de archivos que coinciden con un patrón.
+
+La combinación de estas herramientas nos permite pasar de operaciones manuales a flujos de trabajo de análisis de datos potentes y automatizados.
+
+# ¡Preguntas\!
+
+
+## A continuación 🧭
+
+\
+
+1. **Escribiendo Funciones**: El arte de empaquetar tu código.
+2. **Alcance de Variables (Scope)**: ¿Quién ve qué y dónde?
+3. **Estilo de Programación**: Escribiendo código que otros (y tu "yo" del futuro) amarán.
+4. **Comunidad y Recursos**: A dónde ir después.
+
+# Escribiendo Funciones
+
+## Divide y vencerás: el poder de las funciones
+
+¿Por qué usamos funciones?
+
+- **Nos facilitan la vida**: Los humanos solo podemos mantener unas pocas ideas en la cabeza a la vez. Las funciones nos ayudan a encapsular la complejidad.
+- **Permiten la reutilización**: Escribe el código una vez, úsalo muchas veces.
+
+Pensemos en ellas como recetas: los **parámetros** son los ingredientes y el **cuerpo** de la función son los pasos a seguir.
+
+
+---
+
+## La anatomía de una función
+
+Para definir una función, usamos la palabra clave `def`, seguida de un nombre, paréntesis y dos puntos.
+
+```{python}
+#| echo: true
+# Definición de la función
+def saludar():
+  print('¡Hola!')
+  print('El tiempo hoy está agradable.')
+```
+
+Definir una función no la ejecuta. Es como escribir la receta, pero no cocinarla todavía. Para ejecutarla, debemos *llamarla*.
+
+```{python}
+#| echo: true
+# Llamada a la función
+saludar()
+```
+
+## Dando "ingredientes" a nuestras funciones
+
+Las funciones son más útiles cuando pueden operar con diferentes datos. Para eso usamos **parámetros** (en la definición) y **argumentos** (en la llamada).
+
+```{python}
+#| echo: true
+# 'year', 'month' y 'day' son parámetros
+def imprimir_fecha(year, month, day):
+    # La receta
+    fecha_formateada = f"{year}/{month:02}/{day:02}"
+    print(fecha_formateada)
+
+# 1871, 3, 19 son argumentos
+imprimir_fecha(1871, 3, 19)
+```
+
+## Argumentos por palabra clave
+
+Las funciones pueden recibir parámetros por palabra clave, en lugar de posicional.
+
+Se pueden utilizar los nombres de los parámetros al introducir los argumentos para mayor claridad y flexibilidad en el orden.
+
+```{python}
+#| echo: true
+imprimir_fecha(day=19, year=1871, month=3)
+```
+
+Y podemos pasar los argumentos con listas o diccionarios y desempaquetarlos.
+
+```{python}
+#| echo: true
+imprimir_fecha(*[1871, 3, 19])
+imprimir_fecha(**{'year': 1871, 'month': 3, 'day': 19})
+```
+
+
+## Devolviendo un resultado con `return`
+
+A menudo, queremos que una función nos devuelva un valor para seguir trabajando con él.
+
+```{python}
+#| echo: true
+def promediar(valores):
+    if len(valores) == 0:
+        return None
+
+    return sum(valores) / len(valores)
+
+promedio_calculado = promediar([1, 3, 4])
+print('El promedio es:', promedio_calculado)
+
+promedio_vacio = promediar([])
+print('El promedio de una lista vacía es:', promedio_vacio)
+```
+
+**Ojo**: Una función que no tiene una instrucción `return` explícita, devuelve `None` por defecto.
+
+# Alcance de Variables (Scope)
+
+
+## ¿Dónde viven las variables?
+
+El **alcance** (o *scope*) de una variable es la parte del programa donde esa variable es visible y se puede utilizar.
+
+Esto evita conflictos de nombres y nos permite razonar sobre nuestro código de forma aislada.
+
+```{python}
+#| echo: true
+presion = 103.9  # <-- Variable Global
+
+def ajustar(t):
+    # 't' y 'temperatura' son variables locales
+    temperatura = t * 1.43 / presion 
+    return temperatura
+
+print('Ajustado:', ajustar(0.9))
+```
+
+  - `presion` es **global**: es visible en todas partes.
+  - `t` y `temperatura` son **locales**: solo existen dentro de la función `ajustar`.
+
+
+## ¿Qué pasa si intentamos acceder desde fuera?
+
+Si intentamos usar una variable local fuera de su función, Python nos dará un error.
+
+```{python}
+#| echo: true
+presion = 103.9
+
+def ajustar(t):
+    temperatura = t * 1.43 / presion
+    return temperatura
+
+ajustar(0.9)
+try:
+    print('Temperatura después de la llamada:', temperatura)
+except Exception as e:
+    print(f"{e.__class__.__name__}: {e}")
+```
+
+¡El `NameError` es nuestro amigo\! Nos dice que la variable `temperatura` no existe en el contexto global.
+
+
+## Leyendo un mensaje de error (Traceback)
+
+Los tracebacks parecen intimidantes, pero son un mapa que nos guía al origen del problema.
+
+```{.output}
+---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+<ipython-input-2-e4c4cbafeeb5> in <module>()
+      1 import errors_02
+----> 2 errors_02.print_friday_message()
+
+/Users/ghopper/thesis/code/errors_02.py in print_friday_message()
+     13 
+     14 def print_friday_message():
+---> 15     print_message("Friday")
+
+/Users/ghopper/thesis/code/errors_02.py in print_message(day)
+      9         "sunday": "Aw, the weekend is almost over."
+     10     }
+---> 11     print(messages[day])
+     12 
+     13 
+KeyError: 'Friday'
+```
+
+## Describiendo un error
+
+\
+
+En el traceback, aparecen tres cosas importantes:
+
+1.  **Tipo de error**: `KeyError`. Intentamos acceder a una clave de diccionario que no existe.
+2.  **Línea y archivo**: El error final ocurrió en el archivo `errors_02.py`, en la línea **11**.
+3.  **Función**: Dentro de la función `print_message`.
+4.  **Mensaje**: La clave que falló fue `'Friday'`.
+
+
+# Estilo de Programación
+
+-----
+
+## Escribir código no es solo para para las computadoras
+
+\
+
+> "El código se lee mucho más a menudo de lo que se escribe". - *Guido van Rossum (creador de Python)*
+
+Un estilo de codificación consistente ayuda a otros (y a nuestro futuro "yo") a leer y entender el código. En Python, el estándar de la comunidad es **PEP 8**.
+
+## PEP 8
+
+**Puntos clave:**
+
+  - Usa nombres de variables claros y significativos (ej: `dias_transcurridos` en lugar de `d`).
+  - Usa 4 espacios en blanco para la indentación, no tabuladores.
+  - La consistencia es lo más importante.
+
+Herramientas como `black` o `pycodestyle` pueden ayudarnos a formatear nuestro código automáticamente.
+
+## Docstrings: la documentación integrada
+
+\
+
+Si la primera línea dentro de una función es una cadena de texto, Python la asocia a la función como su documentación. ¡Esto se llama **docstring**\!
+
+```{python}
+#| echo: true
+def promediar(valores):
+    """Devuelve el promedio de una lista de valores.
+    
+    Si la lista está vacía, devuelve None.
+    """
+    if not valores:
+        return None
+    return sum(valores) / len(valores)
+```
+
+## Accediendo a la documentación
+
+Podemos acceder a esta ayuda directamente con la función `help()`.
+
+```{python}
+#| echo: true
+help(promediar)
+```
+
+
+## Assertions: comprobaciones de "sentido común"
+
+Usa `assert` para verificar condiciones que *siempre* deberían ser ciertas en tu código. Si la condición es falsa, el programa se detiene con un `AssertionError`.
+
+Son perfectas para detectar errores internos, no para gestionar errores de usuario.
+
+## Ejemplos de Assertions
+
+```{python}
+#| echo: true
+def calcular_densidad(masa, volumen):
+    """Calcula la densidad aparente seca."""
+    
+    # El volumen nunca debería ser cero o negativo.
+    # Si lo es, hay un error grave en nuestro programa.
+    assert volumen > 0, "El volumen debe ser positivo"
+    
+    return masa / volumen
+```
+
+```{python}
+#| echo: true
+# Esto funciona
+print(f"Densidad: {calcular_densidad(100, 50)}")
+# Esto lanzará un AssertionError
+try:
+    calcular_densidad(100, 0) 
+except AssertionError as e:
+    print(e)
+```
+
+# La Comunidad y Próximos Pasos
+
+## No estás solo: la comunidad Python
+
+Python cuenta con una comunidad enorme y muy activa en la academia y la industria. Si tienes dudas, ¡hay muchos lugares donde buscar ayuda\!
+
+  - **[Documentación oficial de Python 3](https://docs.python.org/3/)**: La fuente de la verdad para el lenguaje y su librería estándar.
+  - **[SciPy](https://scipy.org)**: Una colección fundamental de herramientas científicas.
+  - **[Pandas](https://pandas.pydata.org)**: La librería de referencia para la manipulación y análisis de datos.
+  - **[Jupyter](https://jupyter.org)**: El hogar de los cuadernos interactivos que tanto usamos.
+  - **[Stack Overflow](https://stackoverflow.com/questions/tagged/python)**: Millones de preguntas y respuestas. Busca por etiquetas como `python`, `numpy` o `pandas`.
+
+## Resumen y Puntos Clave
+
+  - **Divide tus programas en funciones** para que sean más fáciles de entender y reutilizar.
+  - **Define funciones con `def`**, dales un nombre, parámetros y un cuerpo de código.
+  - **Las funciones devuelven un resultado con `return`**. Si no, devuelven `None`.
+  - **El alcance de las variables** (global vs. local) determina dónde son visibles.
+  - **Sigue un estilo de código consistente (como PEP 8)** y documenta tu código con **docstrings**.
+  - **La comunidad de Python es un recurso increíble**. ¡Úsala\!
+
+## Obtener Ayuda de las Bibliotecas
+
+\
+
+### Documentación integrada
+
+```python
+import math
+
+# Ayuda general del módulo
+help(math)
+
+# Ayuda de función específica
+help(math.sqrt)
+
+# En Jupyter: usar ? al final
+math.sqrt?  # Muestra documentación
+```
+
+## Explorar contenido
+
+\
+
+```python
+# Ver todas las funciones disponibles
+print(dir(math))
+
+# Atributos específicos (sin métodos internos)
+attrs = [attr for attr in dir(math) if not attr.startswith('_')]
+print(attrs)
+```
+
+---
+
+## Ejercicio Práctico: Simulador de Datos
+
+### Crear datos de ventas aleatorios
+
+```python
+import random
+from datetime import datetime, timedelta
+
+# Simular ventas de 30 días
+ventas_diarias = []
+fecha_inicio = datetime(2024, 1, 1)
+
+for dia in range(30):
+    fecha = fecha_inicio + timedelta(days=dia)
+    # Ventas entre 800 y 1500 euros
+    venta = random.randint(800, 1500)
+    ventas_diarias.append({
+        'fecha': fecha.strftime('%Y-%m-%d'),
+        'venta': venta
+    })
+
+# Mostrar primeras 5 ventas
+for venta in ventas_diarias[:5]:
+    print(f"{venta['fecha']}: €{venta['venta']}")
+```
+
+# Bibliotecas Populares para Data Science
+
+## Análisis de datos
+
+\
+
+```python
+# pandas - Manipulación de datos
+import pandas as pd
+df = pd.read_csv('datos.csv')
+
+# numpy - Computación numérica  
+import numpy as np
+array = np.array([1, 2, 3, 4, 5])
+
+# scipy - Computación científica
+from scipy import stats
+promedio = stats.mean([1, 2, 3, 4, 5])
+```
+
+## Visualización
+
+\
+
+```python
+# matplotlib - Gráficos básicos
+import matplotlib.pyplot as plt
+
+# seaborn - Gráficos estadísticos  
+import seaborn as sns
+
+# plotly - Gráficos interactivos
+import plotly.express as px
+```
+
+---
+
+## Buenas Prácticas con Bibliotecas
+
+\
+
+### Convenciones de importación
+```python
+# ✅ Convenciones estándar reconocidas
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# ❌ Alias no convencionales
+import pandas as dataframes  # Confuso
+import numpy as mathematics  # No estándar
+```
+
+### Importaciones específicas
+```python
+# ✅ Específico y claro
+from datetime import datetime, timedelta
+from math import sqrt, pi, cos
+
+# ❌ Importar todo (evitar)
+from math import *  # No se sabe qué funciones están disponibles
+```
+
+---
+
+## Manejo de Errores con Bibliotecas
+
+### Errores comunes
+```python
+# Error: librería no importada
+print(math.pi)  # NameError: name 'math' is not defined
+
+# Error: función no existe
+import math
+print(math.square(4))  # AttributeError: module 'math' has no attribute 'square'
+
+# Error: argumentos incorrectos
+from math import log
+print(log(0))  # ValueError: math domain error
+```
+
+### Verificar disponibilidad
+```python
+try:
+    import pandas as pd
+    print("Pandas disponible")
+except ImportError:
+    print("Pandas no está instalado")
+    print("Ejecuta: uv add pandas")
+```
+
+---
+
+## Ejercicio Práctico: Análisis de Temperatura
+
+### Crear y analizar datos meteorológicos
+
+```python
+import random
+import math
+from datetime import datetime, timedelta
+
+# Simular temperaturas de 365 días
+temperaturas = []
+fecha_inicio = datetime(2024, 1, 1)
+
+for dia in range(365):
+    fecha = fecha_inicio + timedelta(days=dia)
+    # Simular variación estacional
+    variacion_anual = 10 * math.sin(2 * math.pi * dia / 365)
+    temp_base = 15 + variacion_anual
+    temp_diaria = temp_base + random.uniform(-5, 5)
+    
+    temperaturas.append({
+        'fecha': fecha,
+        'temperatura': round(temp_diaria, 1)
+    })
+
+# Estadísticas básicas
+temps = [t['temperatura'] for t in temperaturas]
+print(f"Temperatura promedio: {sum(temps)/len(temps):.1f}°C")
+print(f"Temperatura máxima: {max(temps):.1f}°C")
+print(f"Temperatura mínima: {min(temps):.1f}°C")
+```
+
+---
+
+# Creando tu propia Biblioteca para Ciencias Sociales
+
+## Estructura básica
+
+```python
+# archivo: analisis_social.py
+def calcular_indice_gini(ingresos):
+    """
+    Calcula el coeficiente de Gini para medir desigualdad de ingresos
+    """
+    ingresos = sorted(ingresos)
+    n = len(ingresos)
+    numerador = sum((i + 1) * ingreso for i, ingreso in enumerate(ingresos))
+    denominador = n * sum(ingresos)
+    return (2 * numerador) / denominador - (n + 1) / n
+
+def analizar_sesgo_genero(lista_nombres, generos):
+    """
+    Analiza distribución de género en una muestra
+    """
+    from collections import Counter
+    conteo = Counter(generos)
+    total = len(generos)
+    
+    resultados = {
+        'distribucion': {k: v/total for k, v in conteo.items()},
+        'total_muestra': total,
+        'proporcion_mujeres': conteo.get('F', 0)/total if 'F' in conteo else 0
+    }
+    return resultados
+
+# Constantes útiles
+CATEGORIAS_EDAD = ['18-25', '26-35', '36-45', '46-55', '56-65', '65+']
+ESCALAS_LIKERT = ['Muy en desacuerdo', 'En desacuerdo', 'Neutral', 'De acuerdo', 'Muy de acuerdo']
+```
+
+## Usando tu biblioteca
+
+```python
+# En otro archivo o notebook
+import analisis_social
+
+# Análisis de desigualdad económica
+ingresos_muestra = [25000, 32000, 45000, 68000, 120000, 85000, 42000]
+gini = analisis_social.calcular_indice_gini(ingresos_muestra)
+print(f"Coeficiente de Gini: {gini:.3f}")  # Ej: 0.412
+
+# Análisis de representación de género
+nombres = ['Ana', 'Carlos', 'Beatriz', 'David', 'Elena', 'Fernando']
+generos = ['F', 'M', 'F', 'M', 'F', 'M']
+resultados_genero = analisis_social.analizar_sesgo_genero(nombres, generos)
+print(f"Proporción de mujeres: {resultados_genero['proporcion_mujeres']:.1%}")
+
+# Acceso a constantes
+print("Categorías de edad estándar:", analisis_social.CATEGORIAS_EDAD)
+```
+
+## Explorando la Documentación
+
+### Recursos oficiales
+- **docs.python.org**: Documentación oficial
+- **PyPI.org**: Registro de paquetes Python  
+- **GitHub**: Código fuente de proyectos
+
+### En el código
+
+```python
+import requests
+
+# Ver información básica
+print(requests.__version__)
+print(requests.__doc__)
+
+# Explorar módulo
+print(dir(requests))
+
+# Documentación específica
+help(requests.get)
+```
+
+---
+
+## Ejercicio Final: Mini Dashboard
+
+### Combinando múltiples librerías
+
+```python
+import random
+import math
+from datetime import datetime, timedelta
+
+def generar_datos_ventas():
+    """Genera datos aleatorios de ventas"""
+    datos = []
+    fecha_inicio = datetime(2024, 1, 1)
+    
+    for dia in range(90):  # 3 meses
+        fecha = fecha_inicio + timedelta(days=dia)
+        tendencia = 1000 + 50 * math.sin(dia / 10)  # Tendencia
+        ruido = random.uniform(-200, 200)           # Variabilidad
+        venta = max(0, tendencia + ruido)
+        
+        datos.append({
+            'fecha': fecha.strftime('%Y-%m-%d'),
+            'venta': round(venta, 2),
+            'dia_semana': fecha.strftime('%A')
+        })
+    return datos
+
+def generar_resumen_ventas(datos_ventas):
+    """Genera resumen estadístico de las ventas"""
+    ventas_vals = [v['venta'] for v in datos_ventas]
+    return {
+        'total': sum(ventas_vals),
+        'promedio': sum(ventas_vals) / len(ventas_vals),
+        'maximo': max(ventas_vals),
+        'minimo': min(ventas_vals),
+        'dias': len(datos_ventas)
+    }
+
+def mostrar_resumen(stats):
+    """Muestra el resumen de ventas en formato legible"""
+    print("📊 RESUMEN DE VENTAS (3 meses)")
+    print(f"Total vendido: €{stats['total']:,.2f}")
+    print(f"Promedio diario: €{stats['promedio']:.2f}")
+    print(f"Mejor día: €{stats['maximo']:.2f}")
+    print(f"Peor día: €{stats['minimo']:.2f}")
+
+# Usar las funciones
+datos_ventas = generar_datos_ventas()
+stats = generar_resumen_ventas(datos_ventas)
+mostrar_resumen(stats)
+
+# Función adicional para análisis específico
+def ventas_por_dia_semana(datos_ventas):
+    """Agrupa ventas por día de la semana"""
+    ventas_por_dia = {}
+    for venta in datos_ventas:
+        dia = venta['dia_semana']
+        if dia not in ventas_por_dia:
+            ventas_por_dia[dia] = []
+        ventas_por_dia[dia].append(venta['venta'])
+    
+    # Calcular promedios por día
+    promedios = {}
+    for dia, ventas in ventas_por_dia.items():
+        promedios[dia] = sum(ventas) / len(ventas)
+    
+    return promedios
+
+# Ejemplo de uso adicional
+print("\n📈 PROMEDIO DE VENTAS POR DÍA DE LA SEMANA:")
+promedios_dias = ventas_por_dia_semana(datos_ventas)
+for dia, promedio in promedios_dias.items():
+    print(f"{dia}: €{promedio:.2f}")
+```
+
+## Resumen: Bibliotecas Python
+
+### Conceptos clave
+- **Import**: `import`, `from...import`, `import...as`
+- **Namespace**: Separación clara de funcionalidades
+- **Documentación**: `help()`, `dir()`, recursos online
+- **Gestión**: uv para instalar y manejar dependencias
+
+### Bibliotecas esenciales
+- **Estándar**: math, random, datetime, os
+- **Data Science**: pandas, numpy, matplotlib, seaborn
+- **Web**: requests, flask, django
+- **IA/ML**: scikit-learn, tensorflow, pytorch
+
